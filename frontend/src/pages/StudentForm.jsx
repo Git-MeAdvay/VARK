@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createTest } from '../api/test';
 
 const VARKAssessment = () => {
   const [currentStep, setCurrentStep] = useState('auth'); // 'auth', 'intro', 'questions', 'results'
@@ -7,11 +8,13 @@ const VARKAssessment = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [results, setResults] = useState(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [response,setResponse] = useState([]);
+  const [name, setName] = useState('test');
+  const [Id, setId] = useState('test');
 
-  // Authentication validation
   const handleAuthSubmit = (e) => {
     e.preventDefault();
-    // In a real app, you would validate against your backend
     if (authCode.trim() === '') {
       setAuthError('Please enter an authentication code');
       return;
@@ -25,27 +28,60 @@ const VARKAssessment = () => {
     }
   };
 
-  // Start the assessment
   const startAssessment = () => {
     setCurrentStep('questions');
   };
 
-  // Handle answer selection
+  useEffect(() => {
+    const interact = async () => {
+      if(currentStep === 'results') {
+        const data = await createTest({
+          name:name,
+          auth:authCode,
+          Id:Id,
+          testData:response,
+        });
+    
+        if(!data.success) {
+          if(data.message) alert(data.message);
+          return;
+        }
+      }
+    };
+    interact();
+  }, [currentStep]);
+
   const handleAnswerSelect = (questionIndex, answerType) => {
     const newAnswers = [...answers];
     newAnswers[questionIndex] = answerType;
+    const newResponse = [...response];
+    newResponse[questionIndex] = {
+      question: varkQuestions[questionIndex].question,
+      answer: answerType
+    };
     setAnswers(newAnswers);
+    setResponse(newResponse);
     
-    // Move to next question or results if done
-    if (currentQuestion < varkQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      calculateResults(newAnswers);
-    }
+    setIsAnimating(true);
+    
+    setTimeout(() => {
+      if (currentQuestion < varkQuestions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        calculateResults(newAnswers);
+      }
+      
+      setIsAnimating(false);
+    }, 300);
   };
 
-  // Calculate VARK results
-  const calculateResults = (finalAnswers) => {
+  useEffect(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }, [currentQuestion]);
+
+  const calculateResults = async (finalAnswers) => {
     const scores = {
       V: 0, // Visual
       A: 0, // Aural
@@ -63,7 +99,6 @@ const VARKAssessment = () => {
     setCurrentStep('results');
   };
 
-  // VARK questions - simplified for demo
   const varkQuestions = [
     {
       question: "When learning a new skill, I prefer to:",
@@ -139,7 +174,6 @@ const VARKAssessment = () => {
     }
   ];
 
-  // Learning style descriptions
   const styleDescriptions = {
     V: "Visual learners prefer to see information presented in visual formats such as charts, graphs, maps, diagrams, and demonstrations.",
     A: "Aural learners learn best by listening and speaking. They benefit from lectures, discussions, and talking things through.",
@@ -147,7 +181,6 @@ const VARKAssessment = () => {
     K: "Kinesthetic learners learn through experience and practice. They prefer hands-on activities and learn by doing."
   };
 
-  // Get dominant learning style
   const getDominantStyle = () => {
     if (!results) return null;
     
@@ -170,7 +203,6 @@ const VARKAssessment = () => {
     return dominantStyle;
   };
 
-  // Authentication screen
   const renderAuthScreen = () => (
     <div className="max-w-md mx-auto mt-24 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">VARK Learning Style Assessment</h2>
@@ -200,7 +232,6 @@ const VARKAssessment = () => {
     </div>
   );
 
-  // Introduction screen
   const renderIntroScreen = () => (
     <div className="max-w-2xl mx-auto mt-24 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">VARK Learning Style Assessment</h2>
@@ -248,7 +279,6 @@ const VARKAssessment = () => {
     </div>
   );
 
-  // Questions screen
   const renderQuestionsScreen = () => {
     const question = varkQuestions[currentQuestion];
     
@@ -262,36 +292,38 @@ const VARKAssessment = () => {
             </span>
           </div>
           
-          <h2 className="text-xl font-semibold text-gray-800 mb-6">{question.question}</h2>
-          
-          <div className="space-y-3">
-            {question.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswerSelect(currentQuestion, option.type)}
-                className="w-full text-left p-4 border border-gray-300 rounded-md hover:bg-orange-50 hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition"
-              >
-                {option.text}
-              </button>
-            ))}
+          <div className={`transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">{question.question}</h2>
+            
+            <div className="space-y-3">
+              {question.options.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleAnswerSelect(currentQuestion, option.type)}
+                  className="w-full text-left p-4 border border-gray-300 rounded-md hover:bg-orange-50 hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition transform hover:translate-x-1"
+                >
+                  {option.text}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
     );
   };
 
-  // Results screen
   const renderResultsScreen = () => {
     const dominantStyle = getDominantStyle();
     const totalQuestions = varkQuestions.length;
     
-    // Calculate percentages
     const percentages = {
       V: Math.round((results.V / totalQuestions) * 100),
       A: Math.round((results.A / totalQuestions) * 100),
       R: Math.round((results.R / totalQuestions) * 100),
       K: Math.round((results.K / totalQuestions) * 100)
     };
+    
+    const animationClass = "animate-fade-in";
     
     return (
       <div className="max-w-2xl mx-auto mt-24 p-6 bg-white rounded-lg shadow-md">
@@ -313,43 +345,43 @@ const VARKAssessment = () => {
             <h3 className="text-lg font-semibold mb-4">Your VARK Profile</h3>
             
             <div className="space-y-4">
-              <div>
+              <div className={animationClass} style={{ animationDelay: "0.1s" }}>
                 <div className="flex justify-between mb-1">
                   <span className="text-sm font-medium text-blue-700">Visual</span>
                   <span className="text-sm font-medium text-blue-700">{percentages.V}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${percentages.V}%` }}></div>
+                  <div className="bg-blue-600 h-2.5 rounded-full transition-all duration-1000 ease-out" style={{ width: `${percentages.V}%` }}></div>
                 </div>
               </div>
               
-              <div>
+              <div className={animationClass} style={{ animationDelay: "0.2s" }}>
                 <div className="flex justify-between mb-1">
                   <span className="text-sm font-medium text-green-700">Aural</span>
                   <span className="text-sm font-medium text-green-700">{percentages.A}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-green-600 h-2.5 rounded-full" style={{ width: `${percentages.A}%` }}></div>
+                  <div className="bg-green-600 h-2.5 rounded-full transition-all duration-1000 ease-out" style={{ width: `${percentages.A}%` }}></div>
                 </div>
               </div>
               
-              <div>
+              <div className={animationClass} style={{ animationDelay: "0.3s" }}>
                 <div className="flex justify-between mb-1">
                   <span className="text-sm font-medium text-purple-700">Read/Write</span>
                   <span className="text-sm font-medium text-purple-700">{percentages.R}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: `${percentages.R}%` }}></div>
+                  <div className="bg-purple-600 h-2.5 rounded-full transition-all duration-1000 ease-out" style={{ width: `${percentages.R}%` }}></div>
                 </div>
               </div>
               
-              <div>
+              <div className={animationClass} style={{ animationDelay: "0.4s" }}>
                 <div className="flex justify-between mb-1">
                   <span className="text-sm font-medium text-amber-700">Kinesthetic</span>
                   <span className="text-sm font-medium text-amber-700">{percentages.K}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-amber-600 h-2.5 rounded-full" style={{ width: `${percentages.K}%` }}></div>
+                  <div className="bg-amber-600 h-2.5 rounded-full transition-all duration-1000 ease-out" style={{ width: `${percentages.K}%` }}></div>
                 </div>
               </div>
             </div>
@@ -398,6 +430,7 @@ const VARKAssessment = () => {
               setCurrentStep('intro');
               setCurrentQuestion(0);
               setAnswers([]);
+              setResponse([]);
               setResults(null);
             }}
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
@@ -418,6 +451,17 @@ const VARKAssessment = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.5s ease-out forwards;
+          opacity: 0;
+        }
+      `}</style>
       
       <div className="pt-16">
         {currentStep === 'auth' && renderAuthScreen()}
