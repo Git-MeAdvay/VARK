@@ -1,10 +1,12 @@
-const url = import.meta.env.VITE_API_URL || "http://localhost:5000/api/";
+const url = import.meta.env.VITE_API_URL || "http://localhost:5000/";
+
+const endpoint = "test";
 
 const createTest = async (newResponse) => {
     if (!newResponse.name || !newResponse.auth || !newResponse.Id || !newResponse.testData) {
         return { success: false, message: "Please fill in all fields." };
     }
-    const res = await fetch(url, {
+    const res = await fetch(url+endpoint, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

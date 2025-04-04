@@ -3,12 +3,17 @@ import Test from '../models/test.model.js';
 export const createTest = async (req, res) => {
   try {
     const { name, auth, Id , testData } = req.body;
+    const existingTest = Test.findOne({auth,Id});
+    if(existingTest) {
+      updateTest(req, res);
+      return res.status(201).json({success:false, message: "Test Results Updated" });
+    }
     if (!testData || testData.length !== 8) {
       return res.status(400).json({success:false, message: "Invalid Request." });
     }
     const test = new Test({ name, auth, Id , testData });
     await test.save();
-    res.status(201).json({success:true, message: "Test created successfully", data: test });
+    res.status(201).json({success:true, message: "Result saved successfully", data: test });
   } catch (error) {
     res.status(500).json({ success:false, message: error.message });
   }

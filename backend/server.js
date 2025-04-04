@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import apiRoutes from "./routes/api.routes.js";
+import testRoutes from "./routes/test.routes.js";
+import loginRoutes from "./routes/login.routes.js";
 import { connectDB } from "./config/db.js";
 
 import dotenv from "dotenv";
@@ -13,7 +14,12 @@ app.use(express.json());
 
 connectDB();
 
-app.use("/api", apiRoutes);
+app.use("/test", testRoutes);
+app.use("/login", loginRoutes);
+app.get("/", (req,res) => {
+    res.send("API is running...");
+  }
+);
 
 
 if (process.env.NODE_ENV !== "production") {
