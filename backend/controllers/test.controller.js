@@ -3,9 +3,8 @@ import Test from '../models/test.model.js';
 export const createTest = async (req, res) => {
   try {
     const { name, auth, Id , testData } = req.body;
-    const existingTest = Test.findOne({auth,Id});
-    if(existingTest) {
-      updateTest(req, res);
+    const existingTest = await Test.findOneAndUpdate({auth:auth, Id:Id},{$set:{testData:testData}}, { new: true });
+    if (existingTest) {
       return res.status(201).json({success:false, message: "Test Results Updated" });
     }
     if (!testData || testData.length !== 8) {
