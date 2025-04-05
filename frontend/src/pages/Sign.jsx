@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signin,signup } from '../api/login';
 
 const AuthComponent = () => {
   const [activeTab, setActiveTab] = useState('signin');
@@ -12,14 +14,18 @@ const AuthComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Handle input change
+  const navigate = useNavigate();
+
+  const gotoDashboard = (user) => {
+    navigate('/dashboard', { state: { user } });
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-    // Clear error when user types
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -28,7 +34,6 @@ const AuthComponent = () => {
     }
   };
 
-  // Validate form
   const validateForm = () => {
     const newErrors = {};
     
@@ -60,7 +65,6 @@ const AuthComponent = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -71,20 +75,35 @@ const AuthComponent = () => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Here you would normally handle authentication with your backend
-      console.log('Form submitted:', activeTab, formData);
+      // console.log('Form submitted:', activeTab, formData);
       
-      // For demo purposes:
       if (activeTab === 'signin') {
-        // Redirect to dashboard or home page after successful signin
-        alert('Sign in successful!');
+        const data = await signin({
+          email: formData.email,
+          passWord: formData.password
+        });
+        // console.log(data);
+        if (data.success) {
+          alert('Sign in successful!');
+          gotoDashboard(data.user);
+        } else {
+          setErrors({ general: data.message });
+        }
       } else {
-        // Redirect to signin or verification page after successful signup
-        alert('Sign up successful!');
-        setActiveTab('signin');
+        const data = await signup({
+          name: formData.name,
+          email: formData.email,
+          passWord: formData.password
+        });
+        // console.log(data);
+        if (data.success) {
+          alert('Sign Up successful!');
+          gotoDashboard(data.user);
+        } else {
+          setErrors({ general: data.message });
+        }
       }
     } catch (error) {
       setErrors({

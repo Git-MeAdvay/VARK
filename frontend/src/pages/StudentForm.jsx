@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { createTest } from '../api/test';
+import { createStudent } from '../api/student';
+import varkQuestions from '../test_data/varkQuestions';
 
 const VARKAssessment = () => {
   const [currentStep, setCurrentStep] = useState('auth'); // 'auth', 'intro', 'questions', 'results'
@@ -35,11 +36,24 @@ const VARKAssessment = () => {
   useEffect(() => {
     const interact = async () => {
       if(currentStep === 'results') {
-        const data = await createTest({
+        const dominantStyle = getDominantStyle() || 'V';
+        const data = await createStudent({
           name:name,
           auth:authCode,
           Id:Id,
           testData:response,
+          testResult:{
+            scores:results,
+            dominantStyle: dominantStyle,
+            styleDescriptions: styleDescriptions[dominantStyle],
+            percentages: {
+              V: Math.round((results.V / varkQuestions.length) * 100),
+              A: Math.round((results.A / varkQuestions.length) * 100),
+              R: Math.round((results.R / varkQuestions.length) * 100),
+              K: Math.round((results.K / varkQuestions.length) * 100)
+            },
+            studyRecommendations:studyRecommendations[dominantStyle],
+          },
         });
     
         if(!data.success) {
@@ -57,7 +71,8 @@ const VARKAssessment = () => {
     const newResponse = [...response];
     newResponse[questionIndex] = {
       question: varkQuestions[questionIndex].question,
-      answer: answerType
+      answer:varkQuestions[questionIndex].options.find(option => option.type === answerType)?.text,
+      type: answerType
     };
     setAnswers(newAnswers);
     setResponse(newResponse);
@@ -99,87 +114,40 @@ const VARKAssessment = () => {
     setCurrentStep('results');
   };
 
-  const varkQuestions = [
-    {
-      question: "When learning a new skill, I prefer to:",
-      options: [
-        { type: "V", text: "Watch a demonstration or video" },
-        { type: "A", text: "Listen to someone explain it" },
-        { type: "R", text: "Read instructions or a manual" },
-        { type: "K", text: "Try it out myself and learn by doing" }
-      ]
-    },
-    {
-      question: "When trying to find my way around a new place, I usually:",
-      options: [
-        { type: "K", text: "Follow my instincts or use a compass" },
-        { type: "A", text: "Ask for spoken directions" },
-        { type: "R", text: "Look at a map or written directions" },
-        { type: "V", text: "Use a map app with visual navigation" }
-      ]
-    },
-    {
-      question: "When cooking a new dish, I prefer to:",
-      options: [
-        { type: "R", text: "Follow a written recipe" },
-        { type: "V", text: "Watch a cooking video" },
-        { type: "K", text: "Experiment and taste as I go" },
-        { type: "A", text: "Talk through the recipe with someone" }
-      ]
-    },
-    {
-      question: "I remember information best when:",
-      options: [
-        { type: "A", text: "I hear it or say it aloud" },
-        { type: "V", text: "I see it visualized in diagrams or pictures" },
-        { type: "R", text: "I read and write notes about it" },
-        { type: "K", text: "I physically interact with it or role-play" }
-      ]
-    },
-    {
-      question: "When solving problems, I tend to:",
-      options: [
-        { type: "K", text: "Use hands-on approaches and practical solutions" },
-        { type: "V", text: "Draw diagrams or visualize the problem" },
-        { type: "A", text: "Discuss it and talk through possibilities" },
-        { type: "R", text: "Make lists and write out potential solutions" }
-      ]
-    },
-    {
-      question: "When attending a presentation, I prefer it to include:",
-      options: [
-        { type: "V", text: "Visual aids like charts, diagrams, and images" },
-        { type: "R", text: "Handouts with written information" },
-        { type: "A", text: "Opportunities for discussion and Q&A" },
-        { type: "K", text: "Interactive demonstrations or activities" }
-      ]
-    },
-    {
-      question: "When explaining something to someone, I tend to:",
-      options: [
-        { type: "R", text: "Write it down or provide written instructions" },
-        { type: "K", text: "Demonstrate and let them try it" },
-        { type: "V", text: "Show them diagrams or pictures" },
-        { type: "A", text: "Explain verbally step by step" }
-      ]
-    },
-    {
-      question: "When learning about a historical event, I prefer to:",
-      options: [
-        { type: "A", text: "Listen to stories or audio recordings" },
-        { type: "K", text: "Visit historical sites or handle artifacts" },
-        { type: "V", text: "View timelines, maps, or historical imagery" },
-        { type: "R", text: "Read accounts and written descriptions" }
-      ]
-    }
-  ];
-
   const styleDescriptions = {
     V: "Visual learners prefer to see information presented in visual formats such as charts, graphs, maps, diagrams, and demonstrations.",
     A: "Aural learners learn best by listening and speaking. They benefit from lectures, discussions, and talking things through.",
     R: "Read/Write learners prefer information displayed as words. They learn best from reading texts and writing notes.",
     K: "Kinesthetic learners learn through experience and practice. They prefer hands-on activities and learn by doing."
   };
+
+  const studyRecommendations = {
+    V: [
+      "Use diagrams, charts, and maps when studying",
+      "Highlight important information with different colors",
+      "Watch educational videos and demonstrations",
+      "Create visual mind maps to organize information"
+    ],
+    A: [
+      "Record and listen to lectures",
+      "Discuss topics with others",
+      "Read material aloud to yourself",
+      "Use audiobooks and educational podcasts"
+    ],
+    R: [
+      "Take detailed notes during lectures",
+      "Rewrite information in your own words",
+      "Create lists, headings, and outlines",
+      "Read textbooks and reference materials"
+    ],
+    K: [
+      "Use hands-on exercises and practical applications",
+      "Take frequent breaks during study sessions",
+      "Create models or physical demonstrations",
+      "Use role-playing to understand concepts"
+    ]
+  };
+  
 
   const getDominantStyle = () => {
     if (!results) return null;
@@ -389,38 +357,14 @@ const VARKAssessment = () => {
           
           <div className="bg-gray-50 p-4 rounded-md mb-6">
             <h3 className="text-lg font-semibold mb-3">Study Recommendations</h3>
-            {dominantStyle === 'V' && (
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Use diagrams, charts, and maps when studying</li>
-                <li>Highlight important information with different colors</li>
-                <li>Watch educational videos and demonstrations</li>
-                <li>Create visual mind maps to organize information</li>
-              </ul>
-            )}
-            {dominantStyle === 'A' && (
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Record and listen to lectures</li>
-                <li>Discuss topics with others</li>
-                <li>Read material aloud to yourself</li>
-                <li>Use audiobooks and educational podcasts</li>
-              </ul>
-            )}
-            {dominantStyle === 'R' && (
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Take detailed notes during lectures</li>
-                <li>Rewrite information in your own words</li>
-                <li>Create lists, headings, and outlines</li>
-                <li>Read textbooks and reference materials</li>
-              </ul>
-            )}
-            {dominantStyle === 'K' && (
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Use hands-on exercises and practical applications</li>
-                <li>Take frequent breaks during study sessions</li>
-                <li>Create models or physical demonstrations</li>
-                <li>Use role-playing to understand concepts</li>
-              </ul>
-            )}
+            <ul className="list-disc pl-5 space-y-2 text-gray-700">
+
+            {studyRecommendations[dominantStyle]?.map((tip, index) => (
+              <li key={index}>{tip}</li>
+            ))
+            }
+            </ul>
+
           </div>
         </div>
         
