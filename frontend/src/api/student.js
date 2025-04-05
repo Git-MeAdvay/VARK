@@ -1,9 +1,9 @@
 const url = import.meta.env.VITE_API_URL || "http://localhost:5000/";
 
-const endpoint = "test";
+const endpoint = "student";
 
-const createTest = async (newResponse) => {
-    if (!newResponse.name || !newResponse.auth || !newResponse.Id || !newResponse.testData) {
+const createStudent = async (newResponse) => {
+    if (!newResponse.name || !newResponse.auth || !newResponse.Id || !newResponse.testData || !newResponse.testResult) {
         return { success: false, message: "Please fill in all fields." };
     }
     const res = await fetch(url+endpoint, {
@@ -20,4 +20,4 @@ const createTest = async (newResponse) => {
     return { success: true, message: "Data saved successfully" };
 }
 
-export { createTest };
+export { createStudent };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createTest } from '../api/test';
+import { createStudent } from '../api/student';
 import varkQuestions from '../test_data/varkQuestions';
 
 const VARKAssessment = () => {
@@ -36,11 +36,24 @@ const VARKAssessment = () => {
   useEffect(() => {
     const interact = async () => {
       if(currentStep === 'results') {
-        const data = await createTest({
+        const dominantStyle = getDominantStyle() || 'V';
+        const data = await createStudent({
           name:name,
           auth:authCode,
           Id:Id,
           testData:response,
+          testResult:{
+            scores:results,
+            dominantStyle: dominantStyle,
+            styleDescriptions: styleDescriptions[dominantStyle],
+            percentages: {
+              V: Math.round((results.V / varkQuestions.length) * 100),
+              A: Math.round((results.A / varkQuestions.length) * 100),
+              R: Math.round((results.R / varkQuestions.length) * 100),
+              K: Math.round((results.K / varkQuestions.length) * 100)
+            },
+            studyRecommendations:studyRecommendations[dominantStyle],
+          },
         });
     
         if(!data.success) {
@@ -58,7 +71,8 @@ const VARKAssessment = () => {
     const newResponse = [...response];
     newResponse[questionIndex] = {
       question: varkQuestions[questionIndex].question,
-      answer: answerType
+      answer:varkQuestions[questionIndex].options.find(option => option.type === answerType)?.text,
+      type: answerType
     };
     setAnswers(newAnswers);
     setResponse(newResponse);
@@ -106,6 +120,34 @@ const VARKAssessment = () => {
     R: "Read/Write learners prefer information displayed as words. They learn best from reading texts and writing notes.",
     K: "Kinesthetic learners learn through experience and practice. They prefer hands-on activities and learn by doing."
   };
+
+  const studyRecommendations = {
+    V: [
+      "Use diagrams, charts, and maps when studying",
+      "Highlight important information with different colors",
+      "Watch educational videos and demonstrations",
+      "Create visual mind maps to organize information"
+    ],
+    A: [
+      "Record and listen to lectures",
+      "Discuss topics with others",
+      "Read material aloud to yourself",
+      "Use audiobooks and educational podcasts"
+    ],
+    R: [
+      "Take detailed notes during lectures",
+      "Rewrite information in your own words",
+      "Create lists, headings, and outlines",
+      "Read textbooks and reference materials"
+    ],
+    K: [
+      "Use hands-on exercises and practical applications",
+      "Take frequent breaks during study sessions",
+      "Create models or physical demonstrations",
+      "Use role-playing to understand concepts"
+    ]
+  };
+  
 
   const getDominantStyle = () => {
     if (!results) return null;
@@ -315,38 +357,14 @@ const VARKAssessment = () => {
           
           <div className="bg-gray-50 p-4 rounded-md mb-6">
             <h3 className="text-lg font-semibold mb-3">Study Recommendations</h3>
-            {dominantStyle === 'V' && (
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Use diagrams, charts, and maps when studying</li>
-                <li>Highlight important information with different colors</li>
-                <li>Watch educational videos and demonstrations</li>
-                <li>Create visual mind maps to organize information</li>
-              </ul>
-            )}
-            {dominantStyle === 'A' && (
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Record and listen to lectures</li>
-                <li>Discuss topics with others</li>
-                <li>Read material aloud to yourself</li>
-                <li>Use audiobooks and educational podcasts</li>
-              </ul>
-            )}
-            {dominantStyle === 'R' && (
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Take detailed notes during lectures</li>
-                <li>Rewrite information in your own words</li>
-                <li>Create lists, headings, and outlines</li>
-                <li>Read textbooks and reference materials</li>
-              </ul>
-            )}
-            {dominantStyle === 'K' && (
-              <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                <li>Use hands-on exercises and practical applications</li>
-                <li>Take frequent breaks during study sessions</li>
-                <li>Create models or physical demonstrations</li>
-                <li>Use role-playing to understand concepts</li>
-              </ul>
-            )}
+            <ul className="list-disc pl-5 space-y-2 text-gray-700">
+
+            {studyRecommendations[dominantStyle]?.map((tip, index) => (
+              <li key={index}>{tip}</li>
+            ))
+            }
+            </ul>
+
           </div>
         </div>
         

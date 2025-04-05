@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import testRoutes from "./routes/test.routes.js";
 import loginRoutes from "./routes/login.routes.js";
+import studentRoutes from "./routes/student.routes.js";
 import { connectDB } from "./config/db.js";
 
 import dotenv from "dotenv";
@@ -16,6 +17,7 @@ connectDB();
 
 app.use("/test", testRoutes);
 app.use("/login", loginRoutes);
+app.use("/student", studentRoutes);
 app.get("/", (req,res) => {
     res.send("API is running...");
   }
