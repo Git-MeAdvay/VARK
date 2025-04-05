@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createTest } from '../api/test';
-import varkQuestions from '../tesr_data/varkQuestions';
+import varkQuestions from '../test_data/varkQuestions';
 
 const VARKAssessment = () => {
   const [currentStep, setCurrentStep] = useState('auth'); // 'auth', 'intro', 'questions', 'results'
