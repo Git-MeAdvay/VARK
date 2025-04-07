@@ -16,6 +16,7 @@ function App() {
         <Route path="/sign" element={<><Sign /></>} />
         <Route path="/form" element={<StudentForm />} />
         <Route path="/test" element={<New />} />
+        <Route path="/dashboard" element={<TeacherDashboard />} />
         </Routes>
     </BrowserRouter>
   )

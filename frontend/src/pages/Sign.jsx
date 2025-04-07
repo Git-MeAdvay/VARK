@@ -17,7 +17,7 @@ const AuthComponent = () => {
   const navigate = useNavigate();
 
   const gotoDashboard = (user) => {
-    navigate('/dashboard', { state: { user } });
+    navigate('/dashboard', { state: { user:user } });
   }
 
   const handleChange = (e) => {
@@ -86,7 +86,8 @@ const AuthComponent = () => {
         });
         // console.log(data);
         if (data.success) {
-          alert('Sign in successful!');
+          // alert('Sign in successful!');
+          // console.log(data);
           gotoDashboard(data.user);
         } else {
           setErrors({ general: data.message });
@@ -99,7 +100,7 @@ const AuthComponent = () => {
         });
         // console.log(data);
         if (data.success) {
-          alert('Sign Up successful!');
+          // alert('Sign Up successful!');
           gotoDashboard(data.user);
         } else {
           setErrors({ general: data.message });
