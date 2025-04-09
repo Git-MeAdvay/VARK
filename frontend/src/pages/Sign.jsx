@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signin,signup } from '../api/login';
 
-const AuthComponent = () => {
+const AuthComponent = ({ language, signIn=true }) => {
   const [activeTab, setActiveTab] = useState('signin');
   const [formData, setFormData] = useState({
     email: '',
@@ -18,6 +18,10 @@ const AuthComponent = () => {
 
   const gotoDashboard = (user) => {
     navigate('/dashboard', { state: { user:user } });
+  }
+
+  if(!signIn) {
+    setActiveTab('signup');
   }
 
   const handleChange = (e) => {

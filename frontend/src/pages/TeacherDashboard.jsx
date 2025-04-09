@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { fetchStudents } from '../api/fetch';
 
-const TeacherDashboard = () => {
+const TeacherDashboard = ({ language }) => {
   const [students, setStudents] = useState([]);
   const [teacherData, setTeacherData] = useState({});
 

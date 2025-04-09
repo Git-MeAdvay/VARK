@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createStudent } from '../api/student';
 import varkQuestions from '../test_data/varkQuestions';
 
-const VARKAssessment = () => {
+const VARKAssessment = ({ language }) => {
   const [currentStep, setCurrentStep] = useState('auth'); // 'auth', 'intro', 'questions', 'results'
   const [authCode, setAuthCode] = useState('');
   const [authError, setAuthError] = useState('');
