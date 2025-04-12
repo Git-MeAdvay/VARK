@@ -2,7 +2,7 @@ export default [
     {
       question: "If a friend wants to go to the market, you would:",
       options: [
-        { type: "V", text: "YGo with him." },
+        { type: "V", text: "Go with him." },
         { type: "A", text: "Tell him directions." },
         { type: "R", text: "Write down the instructions." },
         { type: "K", text: "Draw or show him the map." }
@@ -21,7 +21,7 @@ export default [
       question: "If you get lost in a new place, you will mostly:",
       options: [
         { type: "A", text: "Ask someone for directions." },
-        { type: "K", text: "Walk around until you figure it out.." },
+        { type: "K", text: "Walk around until you figure it out." },
         { type: "R", text: "Check a written address or guide." },
         { type: "V", text: "Look at signs and landmarks." }
       ]
@@ -108,12 +108,21 @@ export default [
       ]
     },
     {
+      question: "When you watch a movie, what do you enjoy the most ?",
+      options: [
+        { type: "V", text: "The colourful scenes." },
+        { type: "A", text: "The music." },
+        { type: "K", text: "The action." },
+        { type: "R", text: "The story." }
+      ]
+    },
+    {
       question: "I prefer a teacher who teaches using:",
       options: [
-        { type: "K", text: "Demonstrations, models or practical sessions" },
+        { type: "K", text: "Demonstrations, models or practical sessions." },
         { type: "A", text: "Group discussions and interaction." },
         { type: "V", text: "Diagrams, charts or graphs." },
-        { type: "R", text: "Handouts, books or readings" }
+        { type: "R", text: "Handouts, books or readings." }
       ]
     },
     {
@@ -135,7 +144,7 @@ export default [
       ]
     },
     {
-      question: "If you are having trouble solving a difficult game, you would",
+      question: "If you are having trouble solving a difficult game, you would:",
       options: [
         { type: "V", text: "Watch a tutorial video." },
         { type: "R", text: "Read written instructions carefully." },
@@ -155,7 +164,7 @@ export default [
     {
       question: "How do you prefer to get updates about school events?",
       options: [
-        { type: "R", text: "A detailed written messageg." },
+        { type: "R", text: "A detailed written message." },
         { type: "V", text: "A visual poster." },
         { type: "K", text: "Experiencing it firsthand (like a practise session or event rehearsal)" },
         { type: "A", text: "An announcement over the speaker." }
@@ -192,8 +201,8 @@ export default [
       question: "If you were to plan a school event, your role would be:",
       options: [
         { type: "R", text: "Designing posters and decorating the venue." },
-        { type: "A", text: "Announcing it on the microphone and hyping it up.." },
-        { type: "K", text: "Writing schedules, invitations, and scripts.." },
+        { type: "A", text: "Announcing it on the microphone and hyping it up." },
+        { type: "K", text: "Writing schedules, invitations, and scripts." },
         { type: "V", text: "Setting up chairs, managing activities, or organizing games." }
       ]
     },    
@@ -211,7 +220,7 @@ export default [
       options: [
         { type: "A", text: "Ask someone for help." },
         { type: "V", text: "Watch how it's fixed." },
-        { type: "R", text: "Read instructions of how to fix it ." },
+        { type: "R", text: "Read instructions of how to fix it." },
         { type: "K", text: "Fix it yourself." }
       ]
     },
@@ -243,19 +252,10 @@ export default [
       ]
     },
     {
-      question: "When you watch a movie , what do you enjoy the most ?",
-      options: [
-        { type: "V", text: "The colourful scenes." },
-        { type: "A", text: "The music." },
-        { type: "K", text: "The action." },
-        { type: "R", text: "The story." }
-      ]
-    },
-    {
       question: "What do you like doing in your free time ?",
       options: [
         { type: "R", text: "Reading books." },
-        { type: "V", text: "Watching videos ." },
+        { type: "V", text: "Watching videos." },
         { type: "A", text: "Listening to music." },
         { type: "K", text: "Playing outside." }
       ]
@@ -281,10 +281,10 @@ export default [
     {
       question: "What do you enjoy the most about science experiments ?",
       options: [
-        { type: "R", text: "You enjoy reading about it." },
-        { type: "V", text: "You enjoy watching the reactions." },
-        { type: "K", text: "You enjoy doing the experiment." },
-        { type: "A", text: "You enjoy listening about the project." }
+        { type: "R", text: "Reading about it." },
+        { type: "V", text: "Watching the reactions." },
+        { type: "K", text: "Doing the experiment." },
+        { type: "A", text: "Listening about the project." }
       ]
     },
     {
@@ -329,7 +329,7 @@ export default [
         { type: "K", text: "Fidget or move around." },
         { type: "V", text: "Doodle or look at visuals." },
         { type: "A", text: "Talk to a friend or hum quietly." },
-        { type: "R", text: "Write notes or read something ." }
+        { type: "R", text: "Write notes or read something." }
       ]
     },
     {
@@ -425,8 +425,8 @@ export default [
     {
       question: "If you have to give a presentation, you would prefer to:",
       options: [
-        { type: "V", text: "Use slides with images and graphics. ." },
-        { type: "K", text: "Use demonstrations or physical examples.." },
+        { type: "V", text: "Use slides with images and graphics." },
+        { type: "K", text: "Use demonstrations or physical examples." },
         { type: "A", text: "Explain things verbally and engage in discussion." },
         { type: "R", text: "Write out the speech and practice reading it." }
       ]
