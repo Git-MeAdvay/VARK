@@ -40,7 +40,7 @@ export default [
       options: [
         { type: "R", text: "Give you written examples." },
         { type: "V", text: "Show you how to do it." },
-        { type: "K", text: "Guide you wwhile you try it yourself." },
+        { type: "K", text: "Guide you while you try it yourself." },
         { type: "A", text: "Explain it out loud." }
       ]
     },
