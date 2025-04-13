@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const LearningStyleAssessment = () => {
+const LearningStyleAssessment = ({ language }) => {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
         {/* Navigation */}
@@ -56,7 +56,7 @@ const LearningStyleAssessment = () => {
           </div>
   
           {/* Text Content */}
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">Learning Style Assessment</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">{language === 'en' ? ("Learning Style Assessment") : ("शिकण्याच्या शैलीचे मूल्यांकन")}</h1>
           <p className="text-gray-600 mb-8 px-4">
             Unlock your potential by discovering your unique learning style. Improve your study habits and 
             academic performance with a personalized assessment designed to highlight how you learn best.
