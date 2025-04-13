@@ -9,7 +9,7 @@ export const createStudent = async (req, res) => {
         const { name, auth, Id, testData, testResult } = req.body;
         const existingStudent = await Student.findOneAndUpdate({ name:name, auth: auth, Id: Id }, { $set: { testData: testData, testResult: testResult } }, { new: true });
         if (existingStudent) {
-            const teacher = await Teacher.findOneAndUpdate({ name:name, auth: auth, Id: Id }, { $push: { students: student._id } }, { new: true });
+            const teacher = await Teacher.findOne({ auth: auth });
             if (!teacher) {
                 return res.status(404).json({ success: false, message: "Invalid Authentication Code." });
             }
