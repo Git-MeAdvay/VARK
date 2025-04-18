@@ -66,7 +66,7 @@ const LearningStyleAssessment = ({ language }) => {
           <button 
             className="px-6 py-3 bg-orange-400 text-white rounded-md hover:bg-orange-500 transition-colors duration-300 shadow-md"
           >
-            Let's Find Out
+            {language === 'en' ? ("Let's Find Out") : ("चला शोधूया")}
           </button>
           </Link>
         </div>

@@ -78,13 +78,15 @@ const ResponsiveNavbar = ({ title = "VARK", language, setLanguage }) => {
               <div className="hidden md:flex items-center space-x-4">
                 {!isAuthenticated ? (
                   <>
-                  <Link to='/sign'>
+                  <Link to='/sign' state={{ language:language, signIn: true }}>
                     <button 
                       onClick={handleSignIn}
                       className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                     >
                       Sign In
                     </button>
+                  </Link>
+                  <Link to='/sign' state={{ language:language, signIn: false }}>
                     <button 
                       onClick={handleSignUp}
                       className="px-4 py-2 bg-orange-400 rounded-md text-sm font-medium text-white hover:bg-orange-500"
@@ -131,7 +133,7 @@ const ResponsiveNavbar = ({ title = "VARK", language, setLanguage }) => {
           </div>
           <div className="p-4">
             <div className="flex flex-col space-y-3">
-              <div className="flex justify-center mb-2">
+              {/* <div className="flex justify-center mb-2">
                 <button 
                   onClick={toggleLanguage}
                   className="inline-flex items-center justify-center px-3 py-2 rounded-sm bg-gray-100 hover:bg-gray-200 transition-colors"
@@ -148,9 +150,9 @@ const ResponsiveNavbar = ({ title = "VARK", language, setLanguage }) => {
                     <span className={`text-sm font-medium ${language === 'mr' ? 'text-orange-500' : 'text-gray-500'}`}>मराठी</span>
                   </div>
                 </button>
-              </div>
+              </div> */}
               
-              <Link to='/sign' state={{ signin: true }}>
+              <Link to='/sign' state={{ language:language, signIn: true }}>
               <button 
                 onClick={handleSignIn}
                 className="w-full px-4 py-3 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium mb-2"
@@ -158,7 +160,7 @@ const ResponsiveNavbar = ({ title = "VARK", language, setLanguage }) => {
                 Sign In
               </button>
               </Link>
-              <Link to='/sign' state={{ signin: false }}>
+              <Link to='/sign' state={{ language:language, signIn: false }}>
               <button 
                 onClick={handleSignUp}
                 className="w-full px-4 py-3 rounded-md bg-orange-400 text-white hover:bg-orange-500 font-medium"
