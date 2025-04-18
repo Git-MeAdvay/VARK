@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createStudent } from '../api/student';
-import varkQuestions from '../test_data/varkQuestions';
+import varkQuestionsEN from '../test_data/varkQuestions';
+import varkQuestionsMR from '../test_data/questionsMR';
 
 const VARKAssessment = ({ language }) => {
   const [currentStep, setCurrentStep] = useState('auth'); // 'auth', 'intro', 'questions', 'results'
@@ -13,6 +14,8 @@ const VARKAssessment = ({ language }) => {
   const [response, setResponse] = useState([]);
   const [name, setName] = useState('');
   const [Id, setId] = useState('');
+
+  const varkQuestions = language === 'en' ? varkQuestionsEN : varkQuestionsMR;
 
   const handleAuthSubmit = (e) => {
     e.preventDefault();
@@ -119,14 +122,14 @@ const VARKAssessment = ({ language }) => {
     setCurrentStep('results');
   };
 
-  const styleDescriptions = {
+  const styleDescriptionsEN = {
     V: "Visual learners prefer to see information presented in visual formats such as charts, graphs, maps, diagrams, and demonstrations.",
     A: "Aural learners learn best by listening and speaking. They benefit from lectures, discussions, and talking things through.",
     R: "Read/Write learners prefer information displayed as words. They learn best from reading texts and writing notes.",
     K: "Kinesthetic learners learn through experience and practice. They prefer hands-on activities and learn by doing."
   };
 
-  const studyRecommendations = {
+  const studyRecommendationsEN = {
     V: [
       "Use diagrams, charts, and maps when studying",
       "Highlight important information with different colors",
@@ -153,14 +156,14 @@ const VARKAssessment = ({ language }) => {
     ]
   };
 
-  const MRstyleDescriptions = {
+  const styleDescriptionsMR = {
     V: "दृश्य शिक्षणार्थींना माहिती तक्ते, आलेख, नकाशे, आकृत्या आणि प्रात्यक्षिके यांसारख्या दृश्य स्वरूपात प्रस्तुत केलेली दिसायला आवडते.",
     A: "श्रवण शिक्षणार्थी ऐकून आणि बोलून सर्वोत्तम शिकतात. त्यांना व्याख्याने, चर्चा आणि गोष्टींवर बोलून फायदा होतो.",
     R: "वाचन/लेखन शिक्षणार्थींना शब्दांमध्ये दर्शविलेली माहिती आवडते. ते लेख वाचून आणि नोट्स लिहून सर्वोत्तम शिकतात.",
     K: "क्रियाशील शिक्षणार्थी अनुभव आणि सराव यातून शिकतात. त्यांना प्रत्यक्ष हाताळून करण्याच्या क्रियाकलापांना प्राधान्य देतात आणि करून शिकतात."
   };
 
-  const MRstudyRecommendations = {
+  const studyRecommendationsMR = {
     V: [
       "अभ्यास करताना आकृत्या, तक्ते आणि नकाशे वापरा",
       "वेगवेगळ्या रंगांनी महत्त्वाची माहिती हायलाइट करा",
@@ -186,6 +189,9 @@ const VARKAssessment = ({ language }) => {
       "संकल्पना समजून घेण्यासाठी रोल-प्लेइंग वापरा"
       ]
   };
+
+  const styleDescriptions = language === 'en' ? styleDescriptionsEN : styleDescriptionsMR;
+  const studyRecommendations = language === 'en' ? studyRecommendationsEN : studyRecommendationsMR;
   
   const getDominantStyle = () => {
     if (!results) return null;
