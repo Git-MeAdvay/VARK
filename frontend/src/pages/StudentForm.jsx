@@ -553,7 +553,7 @@ const VARKAssessment = ({ language }) => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen pt-15 bg-gray-50">
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }

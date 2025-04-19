@@ -15,10 +15,10 @@ function App() {
   return (
     <BrowserRouter>
         <Routes>
-        <Route path="/" element={<><NavBar language={language} setLanguage={setLanguage} /><Home language={language} /></>} />
-        <Route path="/sign" element={<><Sign language={language} /></>} />
-        <Route path="/form" element={<StudentForm language={language} />} />
-        <Route path="/test" element={<New />} language={language} />
+        <Route path="/" element={<><NavBar language={language} setLanguage={setLanguage} disable={false} /><Home language={language} /></>} />
+        <Route path="/sign" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} /><Sign language={language} /></>} />
+        <Route path="/form" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} /><StudentForm language={language} /></>} />
+        {/* <Route path="/test" element={<New />} language={language} /> */}
         <Route path="/dashboard" element={<TeacherDashboard language={language} />} />
         </Routes>
     </BrowserRouter>

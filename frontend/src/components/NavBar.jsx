@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const ResponsiveNavbar = ({ title = "VARK", language, setLanguage }) => {
+const ResponsiveNavbar = ({ title = "VARK", language, setLanguage, disable = true }) => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -81,7 +81,7 @@ const ResponsiveNavbar = ({ title = "VARK", language, setLanguage }) => {
                   <Link to='/sign' state={{ language:language, signIn: true }}>
                     <button 
                       onClick={handleSignIn}
-                      className="cursor-pointer px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                      className={(disable)?"hidden":"" + "cursor-pointer px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"}
                     >
                       Sign In
                     </button>
@@ -89,7 +89,7 @@ const ResponsiveNavbar = ({ title = "VARK", language, setLanguage }) => {
                   <Link to='/sign' state={{ language:language, signIn: false }}>
                     <button 
                       onClick={handleSignUp}
-                      className="cursor-pointer px-4 py-2 bg-orange-400 rounded-md text-sm font-medium text-white hover:bg-orange-500"
+                      className={(disable)?"hidden":"" + "cursor-pointer px-4 py-2 bg-orange-400 rounded-md text-sm font-medium text-white hover:bg-orange-500"}
                     >
                       Sign Up
                     </button>
@@ -155,7 +155,7 @@ const ResponsiveNavbar = ({ title = "VARK", language, setLanguage }) => {
               <Link to='/sign' state={{ language:language, signIn: true }}>
               <button 
                 onClick={handleSignIn}
-                className="cursor-pointer w-full px-4 py-3 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium mb-2"
+                className={(disable)?"hidden":"" + "cursor-pointer w-full px-4 py-3 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium mb-2"}
               >
                 Sign In
               </button>
@@ -163,7 +163,7 @@ const ResponsiveNavbar = ({ title = "VARK", language, setLanguage }) => {
               <Link to='/sign' state={{ language:language, signIn: false }}>
               <button 
                 onClick={handleSignUp}
-                className="cursor-pointer w-full px-4 py-3 rounded-md bg-orange-400 text-white hover:bg-orange-500 font-medium"
+                className={(disable)?"hidden":"" + "cursor-pointer w-full px-4 py-3 rounded-md bg-orange-400 text-white hover:bg-orange-500 font-medium"}
               >
                 Sign Up
               </button>
