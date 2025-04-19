@@ -173,10 +173,10 @@ export default [
     {
       question: "If you were to get a blank notebook, what would you do with it?",
       options: [
-        { type: "R", text: "Read books or write in your diary" },
-        { type: "K", text: "Play active games or move around" },
-        { type: "V", text: "Observe others or look at things around you" },
-        { type: "A", text: "Chat with friends or discuss things" }
+        { type: "R", text: "Use it as a journal to write notes, reports" },
+        { type: "K", text: "Tear its pages and make origami or some craft" },
+        { type: "V", text: "Make art, drawings" },
+        { type: "A", text: "I don't really care" }
       ]
     },
     {
