@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { createStudent } from '../api/student';
 import varkQuestionsEN from '../test_data/varkQuestions';
 import varkQuestionsMR from '../test_data/questionsMR';
+import { generateInsights, generateInsightsMR } from '../api/ai';
+import ReactMarkdown from 'react-markdown';
 
 const VARKAssessment = ({ language }) => {
   const [currentStep, setCurrentStep] = useState('auth'); // 'auth', 'intro', 'questions', 'results'
@@ -14,6 +16,9 @@ const VARKAssessment = ({ language }) => {
   const [response, setResponse] = useState([]);
   const [name, setName] = useState('');
   const [Id, setId] = useState('');
+  const [insights, setInsights] = useState('No Insights generated yet.');
+  const [insightsMR, setInsightsMR] = useState('No Insights generated yet.');
+  const [avialable, setAvailable] = useState(false);
 
   const varkQuestions = language === 'en' ? varkQuestionsEN : varkQuestionsMR;
 
@@ -103,6 +108,57 @@ const VARKAssessment = ({ language }) => {
       document.activeElement.blur();
     }
   }, [currentQuestion]);
+
+  const getInsights = async () => {
+    try {
+      const totalQuestions = varkQuestions.length;
+      let V = Number(((results.V / totalQuestions) * 100).toFixed(2));
+      let A = Number(((results.A / totalQuestions) * 100).toFixed(2));
+      let R = Number(((results.R / totalQuestions) * 100).toFixed(2));
+      let K =  Number(((results.K / totalQuestions) * 100).toFixed(2));
+      const data = await generateInsights(V,A,R,K);
+      setInsights(data);
+      const dataMR = await generateInsightsMR(V,A,R,K);
+      setInsightsMR(dataMR);
+    } catch (error) {
+      console.error("Error generating insights:", error);
+      setInsights("Error generating insights. Please try again later.");
+    }
+  };
+
+  useEffect(() => {
+    const get = async () => {
+        if (currentStep === 'results' && !avialable) {
+          await getInsights();
+          setAvailable(true);
+      }
+    };
+    get();
+  }, [currentStep]);
+
+
+  const printResults = () => {
+    try {
+      const scrollPos = window.scrollY;
+      
+      document.body.classList.add('printing');
+      
+      window.scrollTo(0, 0);
+      
+      setTimeout(() => {
+        window.print();
+        
+        setTimeout(() => {
+          document.body.classList.remove('printing');
+          
+          window.scrollTo(0, scrollPos);
+        }, 100);
+      }, 100);
+    } catch (err) {
+      console.error("Print error:", err);
+      window.print();
+    }
+  };
 
   const calculateResults = async (finalAnswers) => {
     const scores = {
@@ -414,6 +470,7 @@ const VARKAssessment = ({ language }) => {
       R: Number(((results.R / totalQuestions) * 100).toFixed(2)),
       K: Number(((results.K / totalQuestions) * 100).toFixed(2))
     };
+
     
     const styleColors = {
       V: { bg: 'bg-blue-600', text: 'text-blue-700', light: 'bg-blue-50' },
@@ -519,6 +576,18 @@ const VARKAssessment = ({ language }) => {
               </ul>
             </div>
           </div>
+
+          <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-white rounded-lg border border-gray-200 animate-fade-in" style={{ animationDelay: "0.5s" }}>
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1v-3a1 1 0 00-1-1z" clipRule="evenodd"></path>
+              </svg>
+              Additional Learning Insights
+            </h3>
+            <div className="text-gray-700 text-sm sm:text-base space-y-2 sm:space-y-3">
+              <ReactMarkdown>{(language === "en")? insights: insightsMR}</ReactMarkdown>
+            </div>
+          </div>
           
           <div className="flex flex-col sm:flex-row justify-between space-y-3 sm:space-y-0 sm:space-x-4">
             <button
@@ -528,6 +597,7 @@ const VARKAssessment = ({ language }) => {
                 setAnswers([]);
                 setResponse([]);
                 setResults(null);
+                setAvailable(false);
               }}
               className="flex-1 px-4 py-2 sm:py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors flex items-center justify-center text-sm sm:text-base"
             >
@@ -538,7 +608,7 @@ const VARKAssessment = ({ language }) => {
             </button>
             
             <button
-              onClick={() => window.print()}
+              onClick={printResults}
               className="flex-1 px-4 py-2 sm:py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition-colors flex items-center justify-center text-sm sm:text-base"
             >
               <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -554,23 +624,89 @@ const VARKAssessment = ({ language }) => {
   
   return (
     <div className="min-h-screen pt-15 bg-gray-50">
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-fade-in {
-          animation: fadeIn 0.5s ease-out forwards;
-          opacity: 0;
-        }
+<style>{`
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
   
-        @media print {
-          .no-print {
-            display: none;
-          }
-        }
-      `}</style>
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  @media print {
+    /* Hide the navbar during printing */
+    nav, header, .navbar, [role="navigation"] {
+      display: none !important;
+    }
+    
+    /* Reset the padding that accounts for navbar */
+    body {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+      background: white !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    
+    /* Reset positioning that might be accounting for navbar */
+    .min-h-screen, .pt-15 {
+      padding-top: 0 !important;
+      min-height: auto !important;
+    }
+    
+    /* Remove background gradient */
+    .bg-gradient-to-r {
+      background: white !important;
+    }
+    
+    /* Hide buttons and other non-printable elements */
+    button, .no-print {
+      display: none !important;
+    }
+    
+    /* Remove shadows and simplify borders for better printing */
+    .shadow-xl, .border {
+      box-shadow: none !important;
+      border-color: #eee !important;
+    }
+    
+    /* Adjust padding for print */
+    .py-4, .px-4, .p-4, .sm\\:p-8 {
+      padding: 0.5rem !important;
+    }
+    
+    /* Ensure content uses full width */
+    .w-full.max-w-4xl {
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+    }
+    
+    /* Ensure progress bars and colored elements print correctly */
+    .bg-blue-600, .bg-green-600, .bg-purple-600, .bg-amber-600 {
+      print-color-adjust: exact !important;
+      -webkit-print-color-adjust: exact !important;
+    }
+    
+    /* Prevent awkward page breaks */
+    .grid, .p-6, .space-y-4, .mb-6 {
+      page-break-inside: avoid;
+    }
+    
+    /* Hide the button container completely */
+    .flex.flex-col.sm\\:flex-row.justify-between {
+      display: none !important;
+    }
+    
+    /* Force background colors to print */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
+`}</style>
       
       {currentStep === 'auth' && renderAuthScreen()}
       {currentStep === 'intro' && renderIntroScreen()}
