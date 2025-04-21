@@ -90,25 +90,7 @@ export default [
       ]
     },
     {
-      question: "You're most likely to remember a movie because of:",
-      options: [
-        { type: "A", text: "The dialogue and soundtrack of the movie" },
-        { type: "K", text: "The action sequences in the movie" },
-        { type: "V", text: "The amazing visuals and scenes of the movie" },
-        { type: "R", text: "The storyline and plot of the movie" }
-      ]
-    },
-    {
       question: "When you watch a movie , what do you enjoy the most ?",
-      options: [
-        { type: "V", text: "The colourful scenes" },
-        { type: "A", text: "The music" },
-        { type: "K", text: "The action" },
-        { type: "R", text: "The story" }
-      ]
-    },
-    {
-      question: "When you watch a movie, what do you enjoy the most ?",
       options: [
         { type: "V", text: "The colourful scenes" },
         { type: "A", text: "The music" },
