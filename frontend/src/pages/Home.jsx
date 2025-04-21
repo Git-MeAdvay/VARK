@@ -63,7 +63,7 @@ const LearningStyleAssessment = ({ language }) => {
   
           {/* CTA Button */}
           <Link to="/form">
-          <button 
+          <button
             className="cursor-pointer px-6 py-3 bg-orange-400 text-white rounded-md hover:bg-orange-500 transition-colors duration-300 shadow-md"
           >
             {language === 'en' ? ("Let's Find Out") : ("चला शोधूया")}
