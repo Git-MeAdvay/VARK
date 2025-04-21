@@ -239,7 +239,7 @@ export default [
         { type: "R", text: "Read notes" },
         { type: "K", text: "Practice questions" },
         { type: "A", text: "Discuss with friends" },
-        { type: "V", text: "Make a study plan." }
+        { type: "V", text: "Make a study plan" }
       ]
     },
     {
