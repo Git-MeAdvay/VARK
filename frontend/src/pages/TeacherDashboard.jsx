@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { fetchStudents } from '../api/fetch';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 const TeacherDashboard = ({ language }) => {
   const [students, setStudents] = useState([]);
@@ -108,6 +109,45 @@ const TeacherDashboard = ({ language }) => {
   //   );
   // }
 
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-4 border rounded shadow-md">
+          <p className="font-medium">{payload[0].name}: {payload[0].value} students</p>
+          <p className="text-sm text-gray-600">{(payload[0].value / students.length * 100).toFixed(1)}% of class</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const calculateLearningStyleCounts = () => {
+    const counts = {
+      V: 0,
+      A: 0,
+      R: 0,
+      K: 0
+    };
+    
+    if (students && students.length > 0) {
+      students.forEach(student => {
+        if (student.testResult && student.testResult.dominantStyle) {
+          counts[student.testResult.dominantStyle]++;
+        }
+      });
+    }
+    
+    // Convert to array format for PieChart
+    return Object.keys(counts).map(style => ({
+      name: getStyleName(style),
+      value: counts[style],
+      color: getStyleColor(style),
+      icon: getLearningStyleIcon(style)
+    })).filter(item => item.value > 0); // Only include styles that have at least one student
+  };
+
+  const learningStyleData = calculateLearningStyleCounts();
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
@@ -180,6 +220,79 @@ const TeacherDashboard = ({ language }) => {
           );
         })}
       </div>
+
+      {teacherData && teacherData?.students?.length > 0 && (
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-2xl font-bold mb-4">Class Learning Style Distribution</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Pie Chart */}
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={learningStyleData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, value }) => `${name} (${value})`}
+                    onClick={(data) => {
+                      const student = students.find(s => s.testResult.dominantStyle === data.name);
+                      if (student) {
+                        setSelectedStudent(student);
+                      }
+                    }}
+                  >
+                    {learningStyleData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend 
+                    layout="vertical" 
+                    verticalAlign="middle" 
+                    align="right" 
+                    formatter={(value) => {
+                      const style = learningStyleData.find(item => item.name === value);
+                      return <span>{style?.icon} {value}</span>;
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Style Breakdown */}
+            <div className="flex flex-col justify-center">
+              <h3 className="text-xl font-medium mb-4">Student Count by Learning Style</h3>
+              <div className="space-y-4">
+                {learningStyleData.map((style) => (
+                  <div key={style.name} className="bg-gray-100 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <span className="text-2xl mr-2">{style.icon}</span>
+                        <span className="font-medium">{style.name}</span>
+                      </div>
+                      <div className="text-lg font-bold">
+                        {style.value} {style.value === 1 ? 'student' : 'students'}
+                        <span className="text-sm font-normal text-gray-500 ml-2">
+                          ({(style.value / students.length * 100).toFixed(1)}%)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div className="bg-gray-200 rounded-lg p-4 font-medium text-center">
+                  Total: {students.length} students
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Class Average Section */}
        

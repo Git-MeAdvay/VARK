@@ -20,17 +20,17 @@ const ResponsiveNavbar = ({ title = "VARK", language, setLanguage, disable = tru
   };
   
   const handleSignIn = () => {
-    setIsAuthenticated(true);
+    // setIsAuthenticated(true);
     setSidebarOpen(false);
   };
   
   const handleSignUp = () => {
-    setIsAuthenticated(true);
+    // setIsAuthenticated(true);
     setSidebarOpen(false);
   };
   
   const handleSignOut = () => {
-    setIsAuthenticated(false);
+    // setIsAuthenticated(false);
     setProfileSidebarOpen(false);
   };
   

@@ -1,7 +1,7 @@
 import NavBar from './components/NavBar'
 import Home from './pages/Home'
 import StudentForm from './pages/StudentForm'
-import New from './pages/new'
+import New from './pages/ILS'
 import TeacherDashboard from './pages/TeacherDashboard';
 import Sign from './pages/Sign'
 import { useState } from 'react'
@@ -18,7 +18,7 @@ function App() {
         <Route path="/" element={<><NavBar language={language} setLanguage={setLanguage} disable={false} /><Home language={language} /></>} />
         <Route path="/sign" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} /><Sign language={language} /></>} />
         <Route path="/form" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} /><StudentForm language={language} /></>} />
-        {/* <Route path="/test" element={<New />} language={language} /> */}
+        <Route path="/ils" element={<><NavBar title="ILS" language={language} setLanguage={setLanguage} disable={true} /><New language={language} /></>}  />
         <Route path="/dashboard" element={<TeacherDashboard language={language} />} />
         </Routes>
     </BrowserRouter>
