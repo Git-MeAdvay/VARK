@@ -20,7 +20,7 @@ const VARKAssessment = ({ language }) => {
   const [insightsMR, setInsightsMR] = useState('No Insights generated yet.');
   const [avialable, setAvailable] = useState(false);
 
-  const varkQuestions = language === 'en' ? [varkQuestionsEN[0]] : varkQuestionsMR;
+  const varkQuestions = language === 'en' ? varkQuestionsEN : varkQuestionsMR;
 
   const handleAuthSubmit = (e) => {
     e.preventDefault();
