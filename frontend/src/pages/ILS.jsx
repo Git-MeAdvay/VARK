@@ -630,7 +630,7 @@ const ILSAssessment = ({ language = 'en' }) => {
                   {leftSide && (
                     <div 
                       className={`${leftColor} h-full transition-all duration-1000 flex justify-end items-center`} 
-                      style={{ width: `${(absScore / 5) * 100}%` }}
+                      style={{ width: `${(absScore / totalQuestions) * 100}%` }}
                     >
                       {absScore >= 1 && (
                         <span className="text-white text-xs font-bold px-2 z-20">{absScore}</span>
@@ -643,7 +643,7 @@ const ILSAssessment = ({ language = 'en' }) => {
                   {!leftSide && (
                     <div 
                       className={`${rightColor} h-full transition-all duration-1000 flex items-center`} 
-                      style={{ width: `${(absScore / 5) * 100}%` }}
+                      style={{ width: `${(absScore / totalQuestions) * 100}%` }}
                     >
                       {absScore >= 1 && (
                         <span className="text-white text-xs font-bold px-2 z-20">{absScore}</span>
@@ -657,25 +657,17 @@ const ILSAssessment = ({ language = 'en' }) => {
             </div>
             
             <div className="flex justify-between px-0 mt-1 text-xs text-gray-500">
-              <span>11</span>
-              <span>10</span>
-              <span>9</span>
-              <span>8</span>
-              <span>7</span>
-              <span>6</span>
               <span>5</span>
+              <span>4</span>
               <span>3</span>
+              <span>2</span>
               <span>1</span>
               <span>0</span>
               <span>1</span>
+              <span>2</span>
               <span>3</span>
+              <span>4</span>
               <span>5</span>
-              <span>6</span>
-              <span>7</span>
-              <span>8</span>
-              <span>9</span>
-              <span>10</span>
-              <span>11</span>
             </div>
           </div>
         );

@@ -2,6 +2,7 @@ import { useState, useEffect, use } from 'react';
 import { createStudent } from '../api/student';
 import varkQuestionsEN from '../test_data/varkQuestions';
 import varkQuestionsMR from '../test_data/questionsMR';
+import test from '../test_data/test'
 import { generateInsights, generateInsightsMR } from '../api/ai';
 import { verify } from '../api/login';
 import ReactMarkdown from 'react-markdown';
@@ -20,9 +21,10 @@ const VARKAssessment = ({ language }) => {
   const [insights, setInsights] = useState('No Insights generated yet.');
   const [insightsMR, setInsightsMR] = useState('No Insights generated yet.');
   const [avialable, setAvailable] = useState(false);
+  const [testing,setTesting] = useState(false);
 
 
-  const varkQuestions = (language === 'en' ? varkQuestionsEN : varkQuestionsMR);
+  let varkQuestions = (testing) ? test : (language === 'en' ? varkQuestionsEN : varkQuestionsMR);
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +41,10 @@ const VARKAssessment = ({ language }) => {
       setAuthError('Please enter an authentication code');
       return;
     }
-    
+    if (authCode === import.meta.env.VITE_TEST) {
+      console.log("test");
+      setTesting(true);
+    }
     const res = await verify(authCode);
     if (!res.success) {
       setAuthError(res.message);
