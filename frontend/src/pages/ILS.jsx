@@ -447,40 +447,68 @@ const ILSAssessment = ({ language = 'en' }) => {
   const renderIntroScreen = () => (
     <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4 min-h-screen pt-20">
       <div className="w-full max-w-3xl p-4 sm:p-8 bg-white rounded-lg shadow-xl">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">Index of Learning Styles Assessment</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">
+          {language === 'en' ? ("Index of Learning Styles Assessment") : ("शिक्षण शैली मूल्यांकन निर्देशांक")}
+        </h2>
         
         <div className="mb-6 sm:mb-8">
           <p className="mb-4 sm:mb-6 text-base sm:text-lg text-gray-600 text-center">
-            The ILS model helps identify your teaching and learning preferences across four dimensions:
+            {language === 'en' ? 
+              ("The ILS model helps identify your teaching and learning preferences across four dimensions:") : 
+              ("आयएलएस मॉडेल चार आयामांमध्ये आपल्या शिक्षण आणि अध्ययन प्राधान्यांची ओळख करण्यास मदत करते:")}
           </p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div className="p-4 sm:p-6 bg-indigo-50 rounded-lg border border-indigo-100 shadow-sm transform hover:scale-105 transition-transform">
               <div className="flex items-center mb-2 sm:mb-3">
-                <h3 className="font-bold text-indigo-800">Active vs. Reflective</h3>
+                <h3 className="font-bold text-indigo-800">
+                  {language === 'en' ? ("Active vs. Reflective") : ("सक्रिय विरुद्ध चिंतनशील")}
+                </h3>
               </div>
-              <p className="text-indigo-700 text-sm sm:text-base">How you process information: through engagement and practice or through introspection and thinking</p>
+              <p className="text-indigo-700 text-sm sm:text-base">
+                {language === 'en' ? 
+                  ("How you process information: through engagement and practice or through introspection and thinking") : 
+                  ("आपण माहिती कशी प्रक्रिया करता: सहभाग आणि सराव किंवा आत्मनिरीक्षण आणि विचार यांच्या माध्यमातून")}
+              </p>
             </div>
             
             <div className="p-4 sm:p-6 bg-teal-50 rounded-lg border border-teal-100 shadow-sm transform hover:scale-105 transition-transform">
               <div className="flex items-center mb-2 sm:mb-3">
-                <h3 className="font-bold text-teal-800">Sensing vs. Intuitive</h3>
+                <h3 className="font-bold text-teal-800">
+                  {language === 'en' ? ("Sensing vs. Intuitive") : ("संवेदनशील विरुद्ध सहजज्ञानी")}
+                </h3>
               </div>
-              <p className="text-teal-700 text-sm sm:text-base">How you perceive information: through concrete, practical facts or through abstract concepts and theories</p>
+              <p className="text-teal-700 text-sm sm:text-base">
+                {language === 'en' ? 
+                  ("How you perceive information: through concrete, practical facts or through abstract concepts and theories") : 
+                  ("आपण माहिती कशी समजता: मूर्त, व्यावहारिक तथ्यांद्वारे किंवा अमूर्त संकल्पना आणि सिद्धांतांद्वारे")}
+              </p>
             </div>
             
             <div className="p-4 sm:p-6 bg-blue-50 rounded-lg border border-blue-100 shadow-sm transform hover:scale-105 transition-transform">
               <div className="flex items-center mb-2 sm:mb-3">
-                <h3 className="font-bold text-blue-800">Visual vs. Verbal</h3>
+                <h3 className="font-bold text-blue-800">
+                  {language === 'en' ? ("Visual vs. Verbal") : ("दृश्य विरुद्ध शाब्दिक")}
+                </h3>
               </div>
-              <p className="text-blue-700 text-sm sm:text-base">How you receive information: through visual representations or through words and text</p>
+              <p className="text-blue-700 text-sm sm:text-base">
+                {language === 'en' ? 
+                  ("How you receive information: through visual representations or through words and text") : 
+                  ("आपण माहिती कशी प्राप्त करता: दृश्य प्रतिनिधित्वाद्वारे किंवा शब्द आणि मजकुराद्वारे")}
+              </p>
             </div>
             
             <div className="p-4 sm:p-6 bg-violet-50 rounded-lg border border-violet-100 shadow-sm transform hover:scale-105 transition-transform">
               <div className="flex items-center mb-2 sm:mb-3">
-                <h3 className="font-bold text-violet-800">Sequential vs. Global</h3>
+                <h3 className="font-bold text-violet-800">
+                  {language === 'en' ? ("Sequential vs. Global") : ("अनुक्रमिक विरुद्ध वैश्विक")}
+                </h3>
               </div>
-              <p className="text-violet-700 text-sm sm:text-base">How you understand information: in sequential, linear steps or in large, holistic leaps</p>
+              <p className="text-violet-700 text-sm sm:text-base">
+                {language === 'en' ? 
+                  ("How you understand information: in sequential, linear steps or in large, holistic leaps") : 
+                  ("आपण माहिती कशी समजता: अनुक्रमिक, रेखीय पायऱ्यांमध्ये किंवा मोठ्या, संपूर्णवादी उड्यांमध्ये")}
+              </p>
             </div>
           </div>
           
@@ -489,13 +517,18 @@ const ILSAssessment = ({ language = 'en' }) => {
               <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path>
               </svg>
-              About This Assessment
+              {language === 'en' ? ("About This Assessment") : ("या मूल्यांकनाबद्दल")}
             </h3>
             <p className="text-gray-600 text-sm sm:text-base">
-              This assessment contains {ilsQuestions.length} questions. For each question, 
-              select the option that best describes your preference. Your results will help you 
-              understand your teaching style better and provide strategies tailored to your preferences.
-              There are no right or wrong answers - only different approaches to teaching and learning.
+              {language === 'en' ? 
+                (`This assessment contains ${ilsQuestions.length} questions. For each question, 
+                select the option that best describes your preference. Your results will help you 
+                understand your teaching style better and provide strategies tailored to your preferences.
+                There are no right or wrong answers - only different approaches to teaching and learning.`) : 
+                (`या मूल्यांकनात ${ilsQuestions.length} प्रश्न आहेत. प्रत्येक प्रश्नासाठी, 
+                आपल्या प्राधान्याचे सर्वोत्तम वर्णन करणारा पर्याय निवडा. आपले निकाल आपल्याला 
+                आपली शिकवण्याची शैली अधिक चांगल्या प्रकारे समजण्यास आणि आपल्या प्राधान्यांनुसार विशिष्ट रणनीती प्रदान करण्यास मदत करतील.
+                कोणतीही बरोबर किंवा चुकीची उत्तरे नाहीत - केवळ शिकवण्याच्या आणि शिकण्याच्या वेगवेगळ्या पद्धती आहेत.`)}
             </p>
           </div>
         </div>
@@ -504,76 +537,9 @@ const ILSAssessment = ({ language = 'en' }) => {
           onClick={startAssessment}
           className="w-full bg-blue-500 text-white py-2 sm:py-3 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors font-medium flex items-center justify-center"
         >
-          <span>Start Assessment</span>
-          <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-  );
-
-  const MRrenderIntroScreen = () => (
-    <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4 min-h-screen pt-20">
-      <div className="w-full max-w-3xl p-4 sm:p-8 bg-white rounded-lg shadow-xl">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">शिक्षण शैली मूल्यांकन निर्देशांक</h2>
-        
-        <div className="mb-6 sm:mb-8">
-          <p className="mb-4 sm:mb-6 text-base sm:text-lg text-gray-600 text-center">
-            आयएलएस मॉडेल चार आयामांमध्ये आपल्या शिक्षण आणि अध्ययन प्राधान्यांची ओळख करण्यास मदत करते:
-          </p>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <div className="p-4 sm:p-6 bg-indigo-50 rounded-lg border border-indigo-100 shadow-sm transform hover:scale-105 transition-transform">
-              <div className="flex items-center mb-2 sm:mb-3">
-                <h3 className="font-bold text-indigo-800">सक्रिय विरुद्ध चिंतनशील</h3>
-              </div>
-              <p className="text-indigo-700 text-sm sm:text-base">आपण माहिती कशी प्रक्रिया करता: सहभाग आणि सराव किंवा आत्मनिरीक्षण आणि विचार यांच्या माध्यमातून</p>
-            </div>
-            
-            <div className="p-4 sm:p-6 bg-teal-50 rounded-lg border border-teal-100 shadow-sm transform hover:scale-105 transition-transform">
-              <div className="flex items-center mb-2 sm:mb-3">
-                <h3 className="font-bold text-teal-800">संवेदनशील विरुद्ध सहजज्ञानी</h3>
-              </div>
-              <p className="text-teal-700 text-sm sm:text-base">आपण माहिती कशी समजता: मूर्त, व्यावहारिक तथ्यांद्वारे किंवा अमूर्त संकल्पना आणि सिद्धांतांद्वारे</p>
-            </div>
-            
-            <div className="p-4 sm:p-6 bg-blue-50 rounded-lg border border-blue-100 shadow-sm transform hover:scale-105 transition-transform">
-              <div className="flex items-center mb-2 sm:mb-3">
-                <h3 className="font-bold text-blue-800">दृश्य विरुद्ध शाब्दिक</h3>
-              </div>
-              <p className="text-blue-700 text-sm sm:text-base">आपण माहिती कशी प्राप्त करता: दृश्य प्रतिनिधित्वाद्वारे किंवा शब्द आणि मजकुराद्वारे</p>
-            </div>
-            
-            <div className="p-4 sm:p-6 bg-violet-50 rounded-lg border border-violet-100 shadow-sm transform hover:scale-105 transition-transform">
-              <div className="flex items-center mb-2 sm:mb-3">
-                <h3 className="font-bold text-violet-800">अनुक्रमिक विरुद्ध वैश्विक</h3>
-              </div>
-              <p className="text-violet-700 text-sm sm:text-base">आपण माहिती कशी समजता: अनुक्रमिक, रेखीय पायऱ्यांमध्ये किंवा मोठ्या, संपूर्णवादी उड्यांमध्ये</p>
-            </div>
-          </div>
-          
-          <div className="bg-gray-50 p-4 sm:p-6 rounded-lg border border-gray-200 mb-6 sm:mb-8">
-            <h3 className="font-semibold text-gray-800 mb-2 sm:mb-3 flex items-center">
-              <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path>
-              </svg>
-              या मूल्यांकनाबद्दल
-            </h3>
-            <p className="text-gray-600 text-sm sm:text-base">
-              या मूल्यांकनात {ilsQuestions.length} प्रश्न आहेत. प्रत्येक प्रश्नासाठी, 
-              आपल्या प्राधान्याचे सर्वोत्तम वर्णन करणारा पर्याय निवडा. आपले निकाल आपल्याला 
-              आपली शिकवण्याची शैली अधिक चांगल्या प्रकारे समजण्यास आणि आपल्या प्राधान्यांनुसार विशिष्ट रणनीती प्रदान करण्यास मदत करतील.
-              कोणतीही बरोबर किंवा चुकीची उत्तरे नाहीत - केवळ शिकवण्याच्या आणि शिकण्याच्या वेगवेगळ्या पद्धती आहेत.
-            </p>
-          </div>
-        </div>
-        
-        <button
-          onClick={startAssessment}
-          className="w-full bg-blue-500 text-white py-2 sm:py-3 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors font-medium flex items-center justify-center"
-        >
-          <span>मूल्यांकन सुरू करा</span>
+          <span>
+            {language === 'en' ? ("Start Assessment") : ("मूल्यांकन सुरू करा")}
+          </span>
           <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
