@@ -15,7 +15,7 @@ export const signup = async (req, res) => {
         }
         const hashedPassword = await bcrypt.hash(passWord, 10);
         const user = new Login({ name, email, passWord: hashedPassword });
-        const teacher = new Teacher({ name: name, auth: nanoid(6), email: email, password: hashedPassword, students: [] });
+        const teacher = new Teacher({ name: name, auth: nanoid(6), email: email, password: hashedPassword, students: [], ilsData: {}, ilsResults: {} });
         await teacher.save();
         await user.save();
         res.status(201).json({ success: true, message: "User registered successfully",user: teacher });
