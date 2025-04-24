@@ -99,7 +99,7 @@ const AuthComponent = ({ language }) => {
         if (data.success) {
           // alert('Sign in successful!');
           // console.log(data);
-          gotoDashboard(data.user);
+          gotoDashboard(data.user.auth);
         } else {
           setErrors({ general: data.message });
         }
@@ -112,7 +112,7 @@ const AuthComponent = ({ language }) => {
         // console.log(data);
         if (data.success) {
           // alert('Sign Up successful!');
-          gotoDashboard(data.user);
+          gotoDashboard(data.user.auth);
         } else {
           setErrors({ general: data.message });
         }

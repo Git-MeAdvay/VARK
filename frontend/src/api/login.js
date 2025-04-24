@@ -37,5 +37,38 @@ const signin = async (user) => {
     return { success: true, message: "Login successful", user: data.user };
 }
 
+const verify = async (authCode) => {
+    if (!authCode) {
+        return { success: false, message: "Please fill in all fields." };
+    }
+    const res = await fetch(url + "teacher/verify/" + authCode, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    const data = await res.json();
+    if (!data.success) {
+        return { success: false, message: data.message };
+    }
+    return { success: true, message: "Verification successful" };
+}
 
-export { signup, signin };
+const getTeacherData = async (authCode) => {
+    if (!authCode) {
+        return { success: false, message: "Please fill in all fields." };
+    }
+    const res = await fetch(url + "teacher/" + authCode, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    const data = await res.json();
+    if (!data.success) {
+        return { success: false, message: data.message };
+    }
+    return { success: true, message: "Verification successful", data: data.data };
+}
+
+export { signup, signin, verify, getTeacherData };

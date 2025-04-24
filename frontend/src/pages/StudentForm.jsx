@@ -3,6 +3,7 @@ import { createStudent } from '../api/student';
 import varkQuestionsEN from '../test_data/varkQuestions';
 import varkQuestionsMR from '../test_data/questionsMR';
 import { generateInsights, generateInsightsMR } from '../api/ai';
+import { verify } from '../api/login';
 import ReactMarkdown from 'react-markdown';
 
 const VARKAssessment = ({ language }) => {
@@ -20,9 +21,10 @@ const VARKAssessment = ({ language }) => {
   const [insightsMR, setInsightsMR] = useState('No Insights generated yet.');
   const [avialable, setAvailable] = useState(false);
 
-  const varkQuestions = language === 'en' ? varkQuestionsEN : varkQuestionsMR;
 
-  const handleAuthSubmit = (e) => {
+  const varkQuestions = (language === 'en' ? varkQuestionsEN : varkQuestionsMR);
+
+  const handleAuthSubmit = async (e) => {
     e.preventDefault();
 
     if(name.trim() === '') {
@@ -37,6 +39,12 @@ const VARKAssessment = ({ language }) => {
       setAuthError('Please enter an authentication code');
       return;
     }
+    
+    const res = await verify(authCode);
+    if (!res.success) {
+      setAuthError(res.message);
+      return;
+    }
     setCurrentStep('intro');
   };
 
@@ -49,7 +57,7 @@ const VARKAssessment = ({ language }) => {
   useEffect(() => {
     const interact = async () => {
       if(currentStep === 'results') {
-        const dominantStyle = getDominantStyle() || 'V';
+        const dominantStyle = getDominantStyle();
         const data = await createStudent({
           name: name,
           auth: authCode,

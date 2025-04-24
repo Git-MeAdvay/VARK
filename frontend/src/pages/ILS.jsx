@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { generateInsights } from '../api/ai';
+import { generateISLInsights } from '../api/ai';
 import ReactMarkdown from 'react-markdown';
+import { useNavigate,useLocation } from 'react-router-dom';
+import { updateILSResult } from '../api/ils';
 
 const ILSAssessment = ({ language = 'en' }) => {
   const [currentStep, setCurrentStep] = useState('intro'); // 'auth', 'intro', 'questions', 'results'
@@ -8,6 +10,7 @@ const ILSAssessment = ({ language = 'en' }) => {
   const [authError, setAuthError] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
+  const [response, setResponse] = useState([]);
   const [results, setResults] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [name, setName] = useState('');
@@ -15,7 +18,7 @@ const ILSAssessment = ({ language = 'en' }) => {
   const [department, setDepartment] = useState('');
   const [insights, setInsights] = useState('No insights generated yet.');
   const [available, setAvailable] = useState(false);
-
+  const [teacherData, setTeacherData] = useState({});
 
   const ilsQuestions = [
     {
@@ -121,9 +124,34 @@ const ILSAssessment = ({ language = 'en' }) => {
     setCurrentStep('questions');
   };
 
+  useEffect(() => {
+    const interact = async () => {
+      if (currentStep === 'results') {
+        const data = await updateILSResult({
+          ...teacherData,
+          ilsData: response,
+          ilsResults: results
+        });
+        if(!data.success) {
+          if(data.message) alert(data.message);
+          return;
+        }
+      }
+    }
+    interact();
+  }, [currentStep]);
+
+
   const handleAnswerSelect = (questionIndex, answerType) => {
     const newAnswers = [...answers];
     newAnswers[questionIndex] = answerType;
+    const newResponse = [...response];
+    newResponse[questionIndex] = {
+      question: ilsQuestions[questionIndex].question,
+      answer: ilsQuestions[questionIndex].options.find(option => option.type === answerType)?.text,
+      type: answerType
+    };
+    setResponse(newResponse);
     setAnswers(newAnswers);
     
     setIsAnimating(true);
@@ -139,6 +167,20 @@ const ILSAssessment = ({ language = 'en' }) => {
     }, 300);
   };
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const gotoDashboard = () => {
+    navigate('/dashboard', { state: { user: teacherData.auth } });
+  }
+
+  useEffect(() => {
+      if(location.state) {
+        setTeacherData(location.state?.user);
+        console.log(location.state?.user);
+      }
+    }, [location.state]);
+
   useEffect(() => {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
@@ -152,7 +194,7 @@ const ILSAssessment = ({ language = 'en' }) => {
       const visPercent = (results.VIS / (results.VIS + results.VRB)) * 100;
       const seqPercent = (results.SEQ / (results.SEQ + results.GLO)) * 100;
       
-      const data = await generateInsights(actPercent, senPercent, visPercent, seqPercent);
+      const data = await generateISLInsights(actPercent, senPercent, visPercent, seqPercent);
       setInsights(data);
     } catch (error) {
       console.error("Error generating insights:", error);
@@ -213,21 +255,6 @@ const ILSAssessment = ({ language = 'en' }) => {
     
     setResults(scores);
     setCurrentStep('results');
-  };
-
-  const getDimensionScore = (dimension1, dimension2) => {
-    if (!results) return 0;
-    
-    const score1 = results[dimension1] || 0;
-    const score2 = results[dimension2] || 0;
-    
-    const total = score1 + score2;
-    if (total === 0) return 0;
-    
-    const balance = score1 - score2;
-    
-    const maxPossible = total;
-    return Math.round((balance / maxPossible) * 5);
   };
 
   const getPreference = (score) => {
@@ -381,7 +408,7 @@ const ILSAssessment = ({ language = 'en' }) => {
   );
   
   const renderIntroScreen = () => (
-    <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4 min-h-screen pt-20">
+    <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4 min-h-screen">
       <div className="w-full max-w-3xl p-4 sm:p-8 bg-white rounded-lg shadow-xl">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">Index of Learning Styles Assessment</h2>
         
@@ -453,7 +480,7 @@ const ILSAssessment = ({ language = 'en' }) => {
     const question = ilsQuestions[currentQuestion];
     
     return (
-      <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4 min-h-screen pt-20">
+      <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4 min-h-screen">
         <div className="w-full max-w-3xl p-4 sm:p-8 bg-white rounded-lg shadow-xl">
           <div className="mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 space-y-3 sm:space-y-0">
@@ -498,7 +525,6 @@ const ILSAssessment = ({ language = 'en' }) => {
   };
   
   const renderResultsScreen = () => {
-    // Fix 1: Properly calculate scores for each dimension
     const calculateDimensionScore = (dim1, dim2) => {
       if (!results) return 0;
       
@@ -507,18 +533,14 @@ const ILSAssessment = ({ language = 'en' }) => {
       
       if (score1 + score2 === 0) return 0;
       
-      // Calculate score on a scale from -5 to 5
-      // Positive means preference for dim1, negative means preference for dim2
       return Math.round(((score1 - score2) / (score1 + score2)) * 5);
     };
   
-    // Calculate scores correctly
     const actRefScore = calculateDimensionScore('ACT', 'REF');
     const senIntScore = calculateDimensionScore('SEN', 'INT');
     const visVrbScore = calculateDimensionScore('VIS', 'VRB');
     const seqGloScore = calculateDimensionScore('SEQ', 'GLO');
   
-    // Fix 2: Determine dominant preference correctly
     const actRefDominant = actRefScore >= 0 ? 'ACT' : 'REF';
     const senIntDominant = senIntScore >= 0 ? 'SEN' : 'INT';
     const visVrbDominant = visVrbScore >= 0 ? 'VIS' : 'VRB';
@@ -578,13 +600,9 @@ const ILSAssessment = ({ language = 'en' }) => {
               </div>
             </div>
             
-            {/* Use a grid layout with the center marker positioned absolutely */}
             <div className="h-8 rounded-lg overflow-hidden bg-gray-200 relative">
-              {/* Split the scale into two 50% sections */}
               <div className="flex h-full">
-                {/* Left half of the scale */}
                 <div className="w-1/2 flex justify-end relative">
-                  {/* Filled bar that grows from center to left */}
                   {leftSide && (
                     <div 
                       className={`${leftColor} h-full transition-all duration-1000 flex justify-end items-center`} 
@@ -597,9 +615,7 @@ const ILSAssessment = ({ language = 'en' }) => {
                   )}
                 </div>
                 
-                {/* Right half of the scale */}
                 <div className="w-1/2 relative">
-                  {/* Filled bar that grows from center to right */}
                   {!leftSide && (
                     <div 
                       className={`${rightColor} h-full transition-all duration-1000 flex items-center`} 
@@ -613,11 +629,9 @@ const ILSAssessment = ({ language = 'en' }) => {
                 </div>
               </div>
               
-              {/* Center marker positioned absolutely in the middle */}
               <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-gray-600 h-full z-10"></div>
             </div>
             
-            {/* Tick marks */}
             <div className="flex justify-between px-0 mt-1 text-xs text-gray-500">
               <span>5</span>
               <span>3</span>
@@ -632,9 +646,8 @@ const ILSAssessment = ({ language = 'en' }) => {
       };
     
     return (
-      <div className="flex items-center justify-center min-h-screen pt-30 pb-8 bg-gradient-to-r from-blue-100 to-blue-50 px-4">
+      <div className="flex items-center justify-center min-h-screen pb-8 bg-gradient-to-r from-blue-100 to-blue-50 px-4 pt-15">
         <div className="w-full max-w-4xl p-4 sm:p-8 bg-white rounded-lg shadow-xl">
-          {/* Header with user info */}
           <div className="text-center mb-6 sm:mb-8 relative pb-6 border-b border-gray-200">
             <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white w-20 h-20 rounded-full flex items-center justify-center shadow-lg">
               <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -642,15 +655,11 @@ const ILSAssessment = ({ language = 'en' }) => {
               </svg>
             </div>
             <h2 className="text-2xl pt-4 sm:text-3xl font-bold text-gray-800 mb-2 mt-4">Your Teaching Style Profile</h2>
-            <p className="text-base sm:text-lg text-gray-600">
-              {name && `${name}${schoolName ? ` - ${schoolName}` : ''}${department ? ` (${department})` : ''}`}
-            </p>
             <p className="text-sm text-gray-500 mt-2">
               Understanding your preferences can help improve your teaching effectiveness
             </p>
           </div>
           
-          {/* Main content */}
           <div className="mb-8 sm:mb-10 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200">
             <h3 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800 flex items-center">
               <svg className="w-5 h-5 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -681,7 +690,6 @@ const ILSAssessment = ({ language = 'en' }) => {
             </div>
           </div>
           
-          {/* Two column layout for preferences and recommendations */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 print:grid-cols-2">
             <div className="col-span-1">
               <h3 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800 flex items-center">
@@ -786,7 +794,6 @@ const ILSAssessment = ({ language = 'en' }) => {
             </div>
           </div>
           
-          {/* AI Insights section with improved styling */}
           {available && (
             <div className="mb-8 sm:mb-10 p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
               <h3 className="text-lg sm:text-xl font-semibold mb-4 text-blue-800 flex items-center">
@@ -795,15 +802,12 @@ const ILSAssessment = ({ language = 'en' }) => {
                 </svg>
                 AI-Generated Teaching Insights
               </h3>
-              <div className="bg-white p-4 rounded-lg border border-blue-100 shadow-sm">
-                <p className="text-gray-600 whitespace-pre-line leading-relaxed">
+              <div className="text-gray-600 whitespace-pre-line leading-relaxed bg-white p-4 rounded-lg border border-blue-100 shadow-sm">
                     <ReactMarkdown>{insights}</ReactMarkdown>
-                </p>
               </div>
             </div>
           )}
           
-          {/* Action buttons with improved styling */}
           <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={printResults}
@@ -816,13 +820,13 @@ const ILSAssessment = ({ language = 'en' }) => {
             </button>
             
             <button
-              onClick={() => setCurrentStep('intro')}
+              onClick={gotoDashboard}
               className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors flex items-center border border-gray-300"
             >
               <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
               </svg>
-              Start Over
+              Return
             </button>
           </div>
         </div>

@@ -22,6 +22,14 @@ const teacherSchema = new mongoose.Schema({
             type: String
         }
     ],
+    ilsData: {
+        type: Object,
+        required: true,
+    },
+    ilsResults: {
+        type: Object,
+        required: true,
+    },
 });
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
