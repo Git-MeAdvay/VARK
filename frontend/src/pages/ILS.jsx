@@ -97,6 +97,8 @@ const ILSAssessment = ({ language = 'en' }) => {
     }
   ];
 
+  
+
   const totalQuestions = ilsQuestions.length;
 
   const handleAuthSubmit = (e) => {
@@ -299,6 +301,68 @@ const ILSAssessment = ({ language = 'en' }) => {
     ]
   };
 
+  const MRdimensionDescriptions = {
+    ACT: "सक्रिय शिक्षार्थी माहिती सर्वोत्तम रीतीने समजून घेतात आणि लक्षात ठेवतात जेव्हा ते त्यावर काहीतरी सक्रिय करतात—चर्चा करणे, उपयोग करणे किंवा इतरांना समजावून सांगणे.",
+    REF: "चिंतनशील शिक्षार्थी प्रथम शांतपणे विचार करणे पसंत करतात. ते एकटे काम करणे पसंत करतात.",
+    SEN: "संवेदनशील शिक्षार्थी तथ्ये शिकणे आवडते, स्थापित पद्धतींनी समस्या सोडवतात आणि जटिलता नापसंत करतात.",
+    INT: "सहजज्ञानी शिक्षार्थी अनेकदा संभावना आणि संबंध शोधणे पसंत करतात. त्यांना नवकल्पना आवडते आणि पुनरावृत्ती आवडत नाही.",
+    VIS: "दृश्य शिक्षार्थी जे पाहतात ते सर्वोत्तम लक्षात ठेवतात—चित्रे, आकृत्या, फ्लोचार्ट, टाइमलाइन्स, चित्रपट, प्रात्यक्षिके.",
+    VRB: "शाब्दिक शिक्षार्थींना शब्दांपासून अधिक समजते—लिखित आणि मौखिक स्पष्टीकरणे.",
+    SEQ: "अनुक्रमिक शिक्षार्थी रेखीय पायऱ्यांमध्ये समज प्राप्त करतात, प्रत्येक पायरी मागील एकापासून तार्किकदृष्ट्या पुढे जाते.",
+    GLO: "वैश्विक शिक्षार्थी मोठ्या उड्यांमध्ये शिकतात, सामग्री जवळजवळ यादृच्छिकपणे आत्मसात करतात, संबंध न पाहता, आणि नंतर अचानक 'समजून घेतात.'"
+  };
+
+  const MRteachingRecommendations = {
+    ACT: [
+      "गट क्रियाकलाप आणि चर्चा समाविष्ट करा",
+      "वर्गात समस्या-निराकरण व्यायाम समाविष्ट करा",
+      "अशा क्रियाकलापांची रचना करा जिथे विद्यार्थी इतरांना संकल्पना समजावू शकतील",
+      "भूमिका-नाट्य आणि सिम्युलेशन वापरा"
+    ],
+    REF: [
+      "वर्गात वैयक्तिक चिंतनासाठी वेळ द्या",
+      "विद्यार्थ्यांना छोटे सारांश किंवा प्रतिबिंब लिहण्यास सांगा",
+      "विद्यार्थ्यांना तयारी करण्यासाठी विषयांची आगाऊ सूचना द्या",
+      "चर्चेपूर्वी विद्यार्थ्यांना उत्तरे तयार करण्यासाठी वेळ द्या"
+    ],
+    SEN: [
+      "सिद्धांत वास्तविक जगातील उदाहरणे आणि अनुप्रयोगांशी जोडा",
+      "पायरी-दर-पायरी प्रक्रिया आणि पद्धती प्रदान करा",
+      "प्रात्यक्षिक क्रियाकलाप आणि प्रयोगशाळा कार्य समाविष्ट करा",
+      "संकल्पनांपूर्वी ठोस तथ्य आणि डेटा सादर करा"
+    ],
+    INT: [
+      "प्रथम मोठी चित्र आणि अंतर्निहित तत्त्वे सादर करा",
+      "खुल्या-समाप्त समस्यांसह विद्यार्थ्यांना आव्हान द्या",
+      "सर्जनशील विचार आणि नवीन दृष्टिकोन प्रोत्साहित करा",
+      "विषयांमधील पॅटर्न आणि कनेक्शन्स हायलाइट करा"
+    ],
+    VIS: [
+      "शिकवण्यात आकृत्या, चार्ट आणि दृश्य मॉडेल वापरा",
+      "व्हिडिओ आणि प्रात्यक्षिके समाविष्ट करा",
+      "विद्यार्थ्यांना दृश्य प्रतिनिधित्व तयार करण्यास प्रोत्साहित करा",
+      "रंग-कोडिंग आणि स्थानिक संघटन वापरा"
+    ],
+    VRB: [
+      "लिखित सामग्री आणि व्याख्यान नोट्स प्रदान करा",
+      "चर्चा आणि मौखिक स्पष्टीकरणांना प्रोत्साहन द्या",
+      "संकल्पना समजावण्यासाठी कथाकथन आणि कथा वापरा",
+      "विद्यार्थ्यांना त्यांच्या स्वतःच्या शब्दात सारांश लिहण्यास सांगा"
+    ],
+    SEQ: [
+      "सामग्री तार्किक, पायरी-दर-पायरी प्रगतीत सादर करा",
+      "पाठाचे उद्दिष्ट आणि संरचना स्पष्टपणे रेखांकित करा",
+      "जटिल विषयांना लहान, व्यवस्थापन करण्यायोग्य भागांमध्ये विभागा",
+      "सध्याच्या सामग्री आणि मागील धड्यांमधील कनेक्शन्स दाखवा"
+    ],
+    GLO: [
+      "तपशिलांपूर्वी मोठ्या चित्राने सुरुवात करा",
+      "नवीन सामग्री परिचित संकल्पनांशी जोडा",
+      "संबंध दर्शविण्यासाठी उपमा आणि रूपक वापरा",
+      "सर्जनशील समस्या-निराकरण दृष्टिकोन परवानगी द्या"
+    ]
+  };
+
   const renderAuthScreen = () => (
     <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4" style={{ minHeight: 'calc(100vh - 15px)', paddingTop: '15px' }}>
       <div className="w-full max-w-xl p-4 sm:p-8 bg-white rounded-lg shadow-xl relative">
@@ -441,6 +505,75 @@ const ILSAssessment = ({ language = 'en' }) => {
           className="w-full bg-blue-500 text-white py-2 sm:py-3 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors font-medium flex items-center justify-center"
         >
           <span>Start Assessment</span>
+          <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+
+  const MRrenderIntroScreen = () => (
+    <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4 min-h-screen pt-20">
+      <div className="w-full max-w-3xl p-4 sm:p-8 bg-white rounded-lg shadow-xl">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">शिक्षण शैली मूल्यांकन निर्देशांक</h2>
+        
+        <div className="mb-6 sm:mb-8">
+          <p className="mb-4 sm:mb-6 text-base sm:text-lg text-gray-600 text-center">
+            आयएलएस मॉडेल चार आयामांमध्ये आपल्या शिक्षण आणि अध्ययन प्राधान्यांची ओळख करण्यास मदत करते:
+          </p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="p-4 sm:p-6 bg-indigo-50 rounded-lg border border-indigo-100 shadow-sm transform hover:scale-105 transition-transform">
+              <div className="flex items-center mb-2 sm:mb-3">
+                <h3 className="font-bold text-indigo-800">सक्रिय विरुद्ध चिंतनशील</h3>
+              </div>
+              <p className="text-indigo-700 text-sm sm:text-base">आपण माहिती कशी प्रक्रिया करता: सहभाग आणि सराव किंवा आत्मनिरीक्षण आणि विचार यांच्या माध्यमातून</p>
+            </div>
+            
+            <div className="p-4 sm:p-6 bg-teal-50 rounded-lg border border-teal-100 shadow-sm transform hover:scale-105 transition-transform">
+              <div className="flex items-center mb-2 sm:mb-3">
+                <h3 className="font-bold text-teal-800">संवेदनशील विरुद्ध सहजज्ञानी</h3>
+              </div>
+              <p className="text-teal-700 text-sm sm:text-base">आपण माहिती कशी समजता: मूर्त, व्यावहारिक तथ्यांद्वारे किंवा अमूर्त संकल्पना आणि सिद्धांतांद्वारे</p>
+            </div>
+            
+            <div className="p-4 sm:p-6 bg-blue-50 rounded-lg border border-blue-100 shadow-sm transform hover:scale-105 transition-transform">
+              <div className="flex items-center mb-2 sm:mb-3">
+                <h3 className="font-bold text-blue-800">दृश्य विरुद्ध शाब्दिक</h3>
+              </div>
+              <p className="text-blue-700 text-sm sm:text-base">आपण माहिती कशी प्राप्त करता: दृश्य प्रतिनिधित्वाद्वारे किंवा शब्द आणि मजकुराद्वारे</p>
+            </div>
+            
+            <div className="p-4 sm:p-6 bg-violet-50 rounded-lg border border-violet-100 shadow-sm transform hover:scale-105 transition-transform">
+              <div className="flex items-center mb-2 sm:mb-3">
+                <h3 className="font-bold text-violet-800">अनुक्रमिक विरुद्ध वैश्विक</h3>
+              </div>
+              <p className="text-violet-700 text-sm sm:text-base">आपण माहिती कशी समजता: अनुक्रमिक, रेखीय पायऱ्यांमध्ये किंवा मोठ्या, संपूर्णवादी उड्यांमध्ये</p>
+            </div>
+          </div>
+          
+          <div className="bg-gray-50 p-4 sm:p-6 rounded-lg border border-gray-200 mb-6 sm:mb-8">
+            <h3 className="font-semibold text-gray-800 mb-2 sm:mb-3 flex items-center">
+              <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path>
+              </svg>
+              या मूल्यांकनाबद्दल
+            </h3>
+            <p className="text-gray-600 text-sm sm:text-base">
+              या मूल्यांकनात {ilsQuestions.length} प्रश्न आहेत. प्रत्येक प्रश्नासाठी, 
+              आपल्या प्राधान्याचे सर्वोत्तम वर्णन करणारा पर्याय निवडा. आपले निकाल आपल्याला 
+              आपली शिकवण्याची शैली अधिक चांगल्या प्रकारे समजण्यास आणि आपल्या प्राधान्यांनुसार विशिष्ट रणनीती प्रदान करण्यास मदत करतील.
+              कोणतीही बरोबर किंवा चुकीची उत्तरे नाहीत - केवळ शिकवण्याच्या आणि शिकण्याच्या वेगवेगळ्या पद्धती आहेत.
+            </p>
+          </div>
+        </div>
+        
+        <button
+          onClick={startAssessment}
+          className="w-full bg-blue-500 text-white py-2 sm:py-3 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors font-medium flex items-center justify-center"
+        >
+          <span>मूल्यांकन सुरू करा</span>
           <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
           </svg>
