@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState,useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { signin,signup } from '../api/login';
 
-const AuthComponent = ({ language, signIn=true }) => {
+const AuthComponent = ({ language }) => {
   const [activeTab, setActiveTab] = useState('signin');
   const [formData, setFormData] = useState({
     email: '',
@@ -15,14 +15,21 @@ const AuthComponent = ({ language, signIn=true }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   const gotoDashboard = (user) => {
     navigate('/dashboard', { state: { user:user } });
   }
 
-  if(!signIn) {
-    setActiveTab('signup');
-  }
+  useEffect(() => {
+    const { state } = location;
+    if (state && state.signIn) {
+      setActiveTab('signin');
+    } else if (state && !state.signIn) {
+      setActiveTab('signup');
+    }
+  }, [location]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -92,7 +99,7 @@ const AuthComponent = ({ language, signIn=true }) => {
         if (data.success) {
           // alert('Sign in successful!');
           // console.log(data);
-          gotoDashboard(data.user);
+          gotoDashboard(data.user.auth);
         } else {
           setErrors({ general: data.message });
         }
@@ -105,7 +112,7 @@ const AuthComponent = ({ language, signIn=true }) => {
         // console.log(data);
         if (data.success) {
           // alert('Sign Up successful!');
-          gotoDashboard(data.user);
+          gotoDashboard(data.user.auth);
         } else {
           setErrors({ general: data.message });
         }

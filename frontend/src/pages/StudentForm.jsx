@@ -1,6 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { createStudent } from '../api/student';
-import varkQuestions from '../test_data/varkQuestions';
+import varkQuestionsEN from '../test_data/varkQuestions';
+import varkQuestionsMR from '../test_data/questionsMR';
+import test from '../test_data/test'
+import { generateInsights, generateInsightsMR } from '../api/ai';
+import { verify } from '../api/login';
+import ReactMarkdown from 'react-markdown';
 
 const VARKAssessment = ({ language }) => {
   const [currentStep, setCurrentStep] = useState('auth'); // 'auth', 'intro', 'questions', 'results'
@@ -13,8 +18,15 @@ const VARKAssessment = ({ language }) => {
   const [response, setResponse] = useState([]);
   const [name, setName] = useState('');
   const [Id, setId] = useState('');
+  const [insights, setInsights] = useState('No Insights generated yet.');
+  const [insightsMR, setInsightsMR] = useState('No Insights generated yet.');
+  const [avialable, setAvailable] = useState(false);
+  const [testing,setTesting] = useState(false);
 
-  const handleAuthSubmit = (e) => {
+
+  let varkQuestions = (testing) ? test : (language === 'en' ? varkQuestionsEN : varkQuestionsMR);
+
+  const handleAuthSubmit = async (e) => {
     e.preventDefault();
 
     if(name.trim() === '') {
@@ -29,6 +41,15 @@ const VARKAssessment = ({ language }) => {
       setAuthError('Please enter an authentication code');
       return;
     }
+    if (authCode === import.meta.env.VITE_TEST) {
+      console.log("test");
+      setTesting(true);
+    }
+    const res = await verify(authCode);
+    if (!res.success) {
+      setAuthError(res.message);
+      return;
+    }
     setCurrentStep('intro');
   };
 
@@ -41,7 +62,7 @@ const VARKAssessment = ({ language }) => {
   useEffect(() => {
     const interact = async () => {
       if(currentStep === 'results') {
-        const dominantStyle = getDominantStyle() || 'V';
+        const dominantStyle = getDominantStyle();
         const data = await createStudent({
           name: name,
           auth: authCode,
@@ -101,6 +122,57 @@ const VARKAssessment = ({ language }) => {
     }
   }, [currentQuestion]);
 
+  const getInsights = async () => {
+    try {
+      const totalQuestions = varkQuestions.length;
+      let V = Number(((results.V / totalQuestions) * 100).toFixed(2));
+      let A = Number(((results.A / totalQuestions) * 100).toFixed(2));
+      let R = Number(((results.R / totalQuestions) * 100).toFixed(2));
+      let K =  Number(((results.K / totalQuestions) * 100).toFixed(2));
+      const data = await generateInsights(V,A,R,K);
+      setInsights(data);
+      const dataMR = await generateInsightsMR(V,A,R,K);
+      setInsightsMR(dataMR);
+    } catch (error) {
+      console.error("Error generating insights:", error);
+      setInsights("Error generating insights. Please try again later.");
+    }
+  };
+
+  useEffect(() => {
+    const get = async () => {
+        if (currentStep === 'results' && !avialable) {
+          await getInsights();
+          setAvailable(true);
+      }
+    };
+    get();
+  }, [currentStep]);
+
+
+  const printResults = () => {
+    try {
+      const scrollPos = window.scrollY;
+      
+      document.body.classList.add('printing');
+      
+      window.scrollTo(0, 0);
+      
+      setTimeout(() => {
+        window.print();
+        
+        setTimeout(() => {
+          document.body.classList.remove('printing');
+          
+          window.scrollTo(0, scrollPos);
+        }, 100);
+      }, 100);
+    } catch (err) {
+      console.error("Print error:", err);
+      window.print();
+    }
+  };
+
   const calculateResults = async (finalAnswers) => {
     const scores = {
       V: 0, // Visual
@@ -119,14 +191,14 @@ const VARKAssessment = ({ language }) => {
     setCurrentStep('results');
   };
 
-  const styleDescriptions = {
+  const styleDescriptionsEN = {
     V: "Visual learners prefer to see information presented in visual formats such as charts, graphs, maps, diagrams, and demonstrations.",
     A: "Aural learners learn best by listening and speaking. They benefit from lectures, discussions, and talking things through.",
     R: "Read/Write learners prefer information displayed as words. They learn best from reading texts and writing notes.",
     K: "Kinesthetic learners learn through experience and practice. They prefer hands-on activities and learn by doing."
   };
 
-  const studyRecommendations = {
+  const studyRecommendationsEN = {
     V: [
       "Use diagrams, charts, and maps when studying",
       "Highlight important information with different colors",
@@ -152,6 +224,43 @@ const VARKAssessment = ({ language }) => {
       "Use role-playing to understand concepts"
     ]
   };
+
+  const styleDescriptionsMR = {
+    V: "दृश्य शिक्षणार्थींना माहिती तक्ते, आलेख, नकाशे, आकृत्या आणि प्रात्यक्षिके यांसारख्या दृश्य स्वरूपात प्रस्तुत केलेली दिसायला आवडते.",
+    A: "श्रवण शिक्षणार्थी ऐकून आणि बोलून सर्वोत्तम शिकतात. त्यांना व्याख्याने, चर्चा आणि गोष्टींवर बोलून फायदा होतो.",
+    R: "वाचन/लेखन शिक्षणार्थींना शब्दांमध्ये दर्शविलेली माहिती आवडते. ते लेख वाचून आणि नोट्स लिहून सर्वोत्तम शिकतात.",
+    K: "क्रियाशील शिक्षणार्थी अनुभव आणि सराव यातून शिकतात. त्यांना प्रत्यक्ष हाताळून करण्याच्या क्रियाकलापांना प्राधान्य देतात आणि करून शिकतात."
+  };
+
+  const studyRecommendationsMR = {
+    V: [
+      "अभ्यास करताना आकृत्या, तक्ते आणि नकाशे वापरा",
+      "वेगवेगळ्या रंगांनी महत्त्वाची माहिती हायलाइट करा",
+      "शैक्षणिक व्हिडिओ आणि प्रात्यक्षिके पहा",
+      "माहिती व्यवस्थित करण्यासाठी दृश्य माइंड मॅप्स तयार करा"
+      ],
+      A: [
+      "व्याख्याने रेकॉर्ड करा आणि ऐका",
+      "इतरांसोबत विषयांवर चर्चा करा",
+      "स्वतःला मोठ्याने वाचा",
+      "ऑडिओबुक्स आणि शैक्षणिक पॉडकास्ट वापरा"
+      ],
+      R: [
+      "व्याख्यानांदरम्यान तपशीलवार नोट्स घ्या",
+      "माहिती तुमच्या स्वतःच्या शब्दांत पुन्हा लिहा",
+      "याद्या, शीर्षके आणि रूपरेषा तयार करा",
+      "पाठ्यपुस्तके आणि संदर्भ सामग्री वाचा"
+      ],
+      K: [
+      "हातांनी करून शिकण्याचे व्यायाम आणि व्यावहारिक उपयोग वापरा",
+      "अभ्यास सत्रांदरम्यान वारंवार ब्रेक घ्या",
+      "मॉडेल्स किंवा प्रत्यक्ष प्रात्यक्षिके तयार करा",
+      "संकल्पना समजून घेण्यासाठी रोल-प्लेइंग वापरा"
+      ]
+  };
+
+  const styleDescriptions = language === 'en' ? styleDescriptionsEN : styleDescriptionsMR;
+  const studyRecommendations = language === 'en' ? studyRecommendationsEN : studyRecommendationsMR;
   
   const getDominantStyle = () => {
     if (!results) return null;
@@ -374,6 +483,7 @@ const VARKAssessment = ({ language }) => {
       R: Number(((results.R / totalQuestions) * 100).toFixed(2)),
       K: Number(((results.K / totalQuestions) * 100).toFixed(2))
     };
+
     
     const styleColors = {
       V: { bg: 'bg-blue-600', text: 'text-blue-700', light: 'bg-blue-50' },
@@ -479,6 +589,18 @@ const VARKAssessment = ({ language }) => {
               </ul>
             </div>
           </div>
+
+          <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-white rounded-lg border border-gray-200 animate-fade-in" style={{ animationDelay: "0.5s" }}>
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1v-3a1 1 0 00-1-1z" clipRule="evenodd"></path>
+              </svg>
+              Additional Learning Insights
+            </h3>
+            <div className="text-gray-700 text-sm sm:text-base space-y-2 sm:space-y-3">
+              <ReactMarkdown>{(language === "en")? insights: insightsMR}</ReactMarkdown>
+            </div>
+          </div>
           
           <div className="flex flex-col sm:flex-row justify-between space-y-3 sm:space-y-0 sm:space-x-4">
             <button
@@ -488,6 +610,7 @@ const VARKAssessment = ({ language }) => {
                 setAnswers([]);
                 setResponse([]);
                 setResults(null);
+                setAvailable(false);
               }}
               className="flex-1 px-4 py-2 sm:py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors flex items-center justify-center text-sm sm:text-base"
             >
@@ -498,7 +621,7 @@ const VARKAssessment = ({ language }) => {
             </button>
             
             <button
-              onClick={() => window.print()}
+              onClick={printResults}
               className="flex-1 px-4 py-2 sm:py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition-colors flex items-center justify-center text-sm sm:text-base"
             >
               <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -513,24 +636,90 @@ const VARKAssessment = ({ language }) => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-fade-in {
-          animation: fadeIn 0.5s ease-out forwards;
-          opacity: 0;
-        }
+    <div className="min-h-screen pt-15 bg-gray-50">
+<style>{`
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
   
-        @media print {
-          .no-print {
-            display: none;
-          }
-        }
-      `}</style>
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  @media print {
+    /* Hide the navbar during printing */
+    nav, header, .navbar, [role="navigation"] {
+      display: none !important;
+    }
+    
+    /* Reset the padding that accounts for navbar */
+    body {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+      background: white !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    
+    /* Reset positioning that might be accounting for navbar */
+    .min-h-screen, .pt-15 {
+      padding-top: 0 !important;
+      min-height: auto !important;
+    }
+    
+    /* Remove background gradient */
+    .bg-gradient-to-r {
+      background: white !important;
+    }
+    
+    /* Hide buttons and other non-printable elements */
+    button, .no-print {
+      display: none !important;
+    }
+    
+    /* Remove shadows and simplify borders for better printing */
+    .shadow-xl, .border {
+      box-shadow: none !important;
+      border-color: #eee !important;
+    }
+    
+    /* Adjust padding for print */
+    .py-4, .px-4, .p-4, .sm\\:p-8 {
+      padding: 0.5rem !important;
+    }
+    
+    /* Ensure content uses full width */
+    .w-full.max-w-4xl {
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+    }
+    
+    /* Ensure progress bars and colored elements print correctly */
+    .bg-blue-600, .bg-green-600, .bg-purple-600, .bg-amber-600 {
+      print-color-adjust: exact !important;
+      -webkit-print-color-adjust: exact !important;
+    }
+    
+    /* Prevent awkward page breaks */
+    .grid, .p-6, .space-y-4, .mb-6 {
+      page-break-inside: avoid;
+    }
+    
+    /* Hide the button container completely */
+    .flex.flex-col.sm\\:flex-row.justify-between {
+      display: none !important;
+    }
+    
+    /* Force background colors to print */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
+`}</style>
       
       {currentStep === 'auth' && renderAuthScreen()}
       {currentStep === 'intro' && renderIntroScreen()}

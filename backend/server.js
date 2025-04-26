@@ -3,6 +3,7 @@ import cors from "cors";
 import testRoutes from "./routes/test.routes.js";
 import loginRoutes from "./routes/login.routes.js";
 import studentRoutes from "./routes/student.routes.js";
+import teacherRoutes from "./routes/teacher.routes.js";
 import { connectDB } from "./config/db.js";
 
 import dotenv from "dotenv";
@@ -18,6 +19,7 @@ connectDB();
 app.use("/test", testRoutes);
 app.use("/login", loginRoutes);
 app.use("/student", studentRoutes);
+app.use("/teacher", teacherRoutes);
 app.get("/", (req,res) => {
     res.send("API is running...");
   }
@@ -26,7 +28,7 @@ app.get("/", (req,res) => {
 
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
+  app.listen(PORT,'0.0.0.0' , () => {
     console.log(`Server running on port ${PORT}`);
   });
 }

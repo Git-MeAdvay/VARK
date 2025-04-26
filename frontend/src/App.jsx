@@ -1,7 +1,8 @@
 import NavBar from './components/NavBar'
 import Home from './pages/Home'
 import StudentForm from './pages/StudentForm'
-import New from './pages/new'
+import ILS from './pages/ILS'
+import ILSResult from './pages/ILSResult'
 import TeacherDashboard from './pages/TeacherDashboard';
 import Sign from './pages/Sign'
 import { useState } from 'react'
@@ -15,10 +16,11 @@ function App() {
   return (
     <BrowserRouter>
         <Routes>
-        <Route path="/" element={<><NavBar language={language} setLanguage={setLanguage} /><Home language={language} /></>} />
-        <Route path="/sign" element={<><Sign language={language} /></>} />
-        <Route path="/form" element={<StudentForm language={language} />} />
-        <Route path="/test" element={<New />} language={language} />
+        <Route path="/" element={<><NavBar language={language} setLanguage={setLanguage} disable={false} /><Home language={language} /></>} />
+        <Route path="/sign" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} /><Sign language={language} /></>} />
+        <Route path="/form" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} /><StudentForm language={language} /></>} />
+        <Route path="/ils" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} title="ILS" /><ILS language={language} /></>}  />
+        <Route path='/ilsres' element={<><NavBar language={language} setLanguage={setLanguage} disable={true} title="ILS" /><ILSResult language={language}/></>} />
         <Route path="/dashboard" element={<TeacherDashboard language={language} />} />
         </Routes>
     </BrowserRouter>
