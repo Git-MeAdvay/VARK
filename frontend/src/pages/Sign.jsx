@@ -234,14 +234,6 @@ const AuthComponent = ({ language }) => {
               </button>
             </div>
             {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
-            
-            {activeTab === 'signin' && (
-              <div className="mt-1 text-right">
-                <a href="#" className="text-sm text-orange-500 hover:text-orange-600">
-                  Forgot password?
-                </a>
-              </div>
-            )}
           </div>
           
           {/* Confirm Password field - only for signup */}

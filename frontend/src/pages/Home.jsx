@@ -1,16 +1,27 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { BookOpen, Ear, Eye, PenTool, Target, Brain, Puzzle, Award } from 'lucide-react';
 
-export default function Home() {
+export default function Home({ language }) {
   return (
-    <div className="bg-gradient-to-br from-orange-50 to-orange-100 min-h-screen">
+    <div className="pt-5 bg-gradient-to-br from-orange-50 to-orange-100 min-h-screen">
       <div className="max-w-6xl mx-auto px-4 py-8">
         <header className="text-center mb-12 pt-8">
-          <div className="inline-block bg-orange-500 text-white px-6 py-3 rounded-lg mb-6 transform -rotate-2 shadow-lg">
+          <div className="inline-block bg-orange-500 text-white px-6 py-3 rounded-lg mb-6 transform shadow-lg">
             <h1 className="text-4xl font-bold">Discover Your Learning Style</h1>
           </div>
           <p className="text-xl text-orange-800 mt-4">Unlock your full potential by understanding how you learn best</p>
         </header>
+
+        <section className="text-center bg-orange-500 text-white p-8 rounded-xl shadow-xl mb-12">
+          <h2 className="text-2xl font-bold mb-4">Ready to discover your learning style?</h2>
+          <p className="mb-6">Take our assessment to find out which methods work best for you</p>
+          <Link to="/form">
+          <button  className="cursor-pointer bg-white text-orange-600 px-8 py-3 rounded-lg font-semibold hover:bg-orange-100 transition-colors shadow-md">
+            Take the VARK Assessment
+          </button>
+          </Link>
+        </section>
         
         {/* Benefits Section */}
         <section className="mb-16">
@@ -98,18 +109,9 @@ export default function Home() {
           </div>
         </section>
         
-        {/* Call to Action */}
-        <section className="text-center bg-orange-500 text-white p-8 rounded-xl shadow-xl mb-12">
-          <h2 className="text-2xl font-bold mb-4">Ready to discover your learning style?</h2>
-          <p className="mb-6">Take our assessment to find out which methods work best for you</p>
-          <button className="bg-white text-orange-600 px-8 py-3 rounded-lg font-semibold hover:bg-orange-100 transition-colors shadow-md">
-            Take the VARK Assessment
-          </button>
-        </section>
-        
         {/* Fun Footer Element */}
         <div className="flex justify-center mb-8">
-          <div className="bg-orange-200 p-4 rounded-lg shadow inline-block transform rotate-2">
+          <div className="bg-orange-200 p-4 rounded-lg shadow inline-block transform">
             <p className="text-orange-800 font-medium">Learn smarter, not harder!</p>
           </div>
         </div>
