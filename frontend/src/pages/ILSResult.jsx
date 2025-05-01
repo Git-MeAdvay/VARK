@@ -84,7 +84,7 @@ const renderResults = () => {
       
       if (score1 + score2 === 0) return 0;
       
-      return Math.round(((score1 - score2) / (score1 + score2)) * 5);
+      return Math.round(score1 - score2);
     };
   
     const actRefScore = calculateDimensionScore('ACT', 'REF');
@@ -226,7 +226,7 @@ const renderResults = () => {
                   {leftSide && (
                     <div 
                       className={`${leftColor} h-full transition-all duration-1000 flex justify-end items-center`} 
-                      style={{ width: `${(absScore / 5) * 100}%` }}
+                      style={{ width: `${(absScore / totalQuestions) * 100}%` }}
                     >
                       {absScore >= 1 && (
                         <span className="text-white text-xs font-bold px-2 z-20">{absScore}</span>
@@ -239,7 +239,7 @@ const renderResults = () => {
                   {!leftSide && (
                     <div 
                       className={`${rightColor} h-full transition-all duration-1000 flex items-center`} 
-                      style={{ width: `${(absScore / 5) * 100}%` }}
+                      style={{ width: `${(absScore / totalQuestions) * 100}%` }}
                     >
                       {absScore >= 1 && (
                         <span className="text-white text-xs font-bold px-2 z-20">{absScore}</span>
@@ -254,11 +254,15 @@ const renderResults = () => {
             
             <div className="flex justify-between px-0 mt-1 text-xs text-gray-500">
               <span>5</span>
+              <span>4</span>
               <span>3</span>
+              <span>2</span>
               <span>1</span>
               <span>0</span>
               <span>1</span>
+              <span>2</span>
               <span>3</span>
+              <span>4</span>
               <span>5</span>
             </div>
           </div>
@@ -266,7 +270,7 @@ const renderResults = () => {
       };
     
     return (
-      <div className="flex items-center justify-center min-h-screen pb-8 bg-gradient-to-r from-blue-100 to-blue-50 px-4 pt-15">
+      <div className="flex items-center justify-center min-h-screen pb-8 bg-gradient-to-r from-blue-100 to-blue-50 px-4 pt-30">
         <div className="w-full max-w-4xl p-4 sm:p-8 bg-white rounded-lg shadow-xl">
           <div className="text-center mb-6 sm:mb-8 relative pb-6 border-b border-gray-200">
             <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white w-20 h-20 rounded-full flex items-center justify-center shadow-lg">

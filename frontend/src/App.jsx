@@ -19,8 +19,8 @@ function App() {
         <Route path="/" element={<><NavBar language={language} setLanguage={setLanguage} disable={false} /><Home language={language} /></>} />
         <Route path="/sign" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} /><Sign language={language} /></>} />
         <Route path="/form" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} /><StudentForm language={language} /></>} />
-        <Route path="/ils" element={<><ILS language={language} /></>}  />
-        <Route path='/ilsres' element={<><ILSResult language={language}/></>} />
+        <Route path="/ils" element={<><NavBar language={language} setLanguage={setLanguage} disable={true} title="ILS" /><ILS language={language} /></>}  />
+        <Route path='/ilsres' element={<><NavBar language={language} setLanguage={setLanguage} disable={true} title="ILS" /><ILSResult language={language}/></>} />
         <Route path="/dashboard" element={<TeacherDashboard language={language} />} />
         </Routes>
     </BrowserRouter>

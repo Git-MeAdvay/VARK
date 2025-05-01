@@ -3,6 +3,8 @@ import { generateISLInsights } from '../api/ai';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { updateILSResult } from '../api/ils';
+import ilsEN from '../test_data/ILS';
+import ilsMR from '../test_data/ilsMR';
 
 const ILSAssessment = ({ language = 'en' }) => {
   const [currentStep, setCurrentStep] = useState('intro'); // 'auth', 'intro', 'questions', 'results'
@@ -20,87 +22,7 @@ const ILSAssessment = ({ language = 'en' }) => {
   const [available, setAvailable] = useState(false);
   const [teacherData, setTeacherData] = useState({});
 
-  const ilsQuestions = [
-    {
-      question: "I understand something better after I",
-      options: [
-        { text: "try it out", type: "ACT" },
-        { text: "think it through", type: "REF" }
-      ]
-    },
-    {
-      question: "When I am learning something new, it helps me to",
-      options: [
-        { text: "talk about it", type: "ACT" },
-        { text: "think about it", type: "REF" }
-      ]
-    },
-    {
-      question: "I prefer courses that emphasize",
-      options: [
-        { text: "concrete material (facts, data)", type: "SEN" },
-        { text: "abstract material (concepts, theories)", type: "INT" }
-      ]
-    },
-    {
-      question: "I find it easier to",
-      options: [
-        { text: "learn facts", type: "SEN" },
-        { text: "learn concepts", type: "INT" }
-      ]
-    },
-    {
-      question: "When I think about what I did yesterday, I am most likely to get",
-      options: [
-        { text: "a picture", type: "VIS" },
-        { text: "words", type: "VRB" }
-      ]
-    },
-    {
-      question: "I prefer to get new information in",
-      options: [
-        { text: "pictures, diagrams, graphs, or maps", type: "VIS" },
-        { text: "written directions or verbal information", type: "VRB" }
-      ]
-    },
-    {
-      question: "I tend to",
-      options: [
-        { text: "understand details of a subject but may be fuzzy about its overall structure", type: "SEQ" },
-        { text: "understand the overall structure but may be fuzzy about details", type: "GLO" }
-      ]
-    },
-    {
-      question: "When solving problems I",
-      options: [
-        { text: "work my way to the solutions one step at a time", type: "SEQ" },
-        { text: "often just see the solutions but then have to struggle to figure out the steps", type: "GLO" }
-      ]
-    },
-    {
-      question: "When solving problems I",
-      options: [
-        { text: "work my way to the solutions one step at a time", type: "SEQ" },
-        { text: "often just see the solutions but then have to struggle to figure out the steps", type: "GLO" }
-      ]
-    },
-    {
-      question: "When solving problems I",
-      options: [
-        { text: "work my way to the solutions one step at a time", type: "SEQ" },
-        { text: "often just see the solutions but then have to struggle to figure out the steps", type: "GLO" }
-      ]
-    },
-    {
-      question: "When solving problems I",
-      options: [
-        { text: "work my way to the solutions one step at a time", type: "SEQ" },
-        { text: "often just see the solutions but then have to struggle to figure out the steps", type: "GLO" }
-      ]
-    }
-  ];
-
-  
+  const ilsQuestions = (language === 'en') ? ilsEN : ilsMR;
 
   const totalQuestions = ilsQuestions.length;
 
@@ -266,7 +188,7 @@ const ILSAssessment = ({ language = 'en' }) => {
     return "Strong";
   };
 
-  const dimensionDescriptions = {
+  const ENdimensionDescriptions = {
     ACT: "Active learners tend to retain and understand information best by doing something active with it—discussing or applying it or explaining it to others.",
     REF: "Reflective learners prefer to think about it quietly first. They prefer to work alone.",
     SEN: "Sensing learners tend to like learning facts, solve problems with well-established methods, and dislike complications.",
@@ -277,7 +199,7 @@ const ILSAssessment = ({ language = 'en' }) => {
     GLO: "Global learners tend to learn in large jumps, absorbing material almost randomly without seeing connections, and then suddenly 'getting it.'"
   };
 
-  const teachingRecommendations = {
+  const ENteachingRecommendations = {
     ACT: [
       "Incorporate group activities and discussions",
       "Include problem-solving exercises in class",
@@ -390,6 +312,9 @@ const ILSAssessment = ({ language = 'en' }) => {
     ]
   };
 
+  const dimensionDescriptions = (language === 'en') ? ENdimensionDescriptions : MRdimensionDescriptions;
+  const teachingRecommendations = (language === 'en') ? ENteachingRecommendations : MRteachingRecommendations;
+
   const renderAuthScreen = () => (
     <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4" style={{ minHeight: 'calc(100vh - 15px)', paddingTop: '15px' }}>
       <div className="w-full max-w-xl p-4 sm:p-8 bg-white rounded-lg shadow-xl relative">
@@ -472,7 +397,7 @@ const ILSAssessment = ({ language = 'en' }) => {
   );
   
   const renderIntroScreen = () => (
-    <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4 min-h-screen">
+    <div className="pt-20 flex items-center justify-center bg-gradient-to-r from-blue-100 to-blue-50 p-4 min-h-screen">
       <div className="w-full max-w-3xl p-4 sm:p-8 bg-white rounded-lg shadow-xl">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">
           {language === 'en' ? ("Index of Learning Styles Assessment") : ("शिक्षण शैली मूल्यांकन निर्देशांक")}
@@ -632,7 +557,7 @@ const ILSAssessment = ({ language = 'en' }) => {
       
       if (score1 + score2 === 0) return 0;
       
-      return Math.round(((score1 - score2) / (score1 + score2)) * 5);
+      return Math.round((score1 - score2));
     };
   
     const actRefScore = calculateDimensionScore('ACT', 'REF');
@@ -705,7 +630,7 @@ const ILSAssessment = ({ language = 'en' }) => {
                   {leftSide && (
                     <div 
                       className={`${leftColor} h-full transition-all duration-1000 flex justify-end items-center`} 
-                      style={{ width: `${(absScore / 5) * 100}%` }}
+                      style={{ width: `${(absScore / totalQuestions) * 100}%` }}
                     >
                       {absScore >= 1 && (
                         <span className="text-white text-xs font-bold px-2 z-20">{absScore}</span>
@@ -718,7 +643,7 @@ const ILSAssessment = ({ language = 'en' }) => {
                   {!leftSide && (
                     <div 
                       className={`${rightColor} h-full transition-all duration-1000 flex items-center`} 
-                      style={{ width: `${(absScore / 5) * 100}%` }}
+                      style={{ width: `${(absScore / totalQuestions) * 100}%` }}
                     >
                       {absScore >= 1 && (
                         <span className="text-white text-xs font-bold px-2 z-20">{absScore}</span>
@@ -733,11 +658,15 @@ const ILSAssessment = ({ language = 'en' }) => {
             
             <div className="flex justify-between px-0 mt-1 text-xs text-gray-500">
               <span>5</span>
+              <span>4</span>
               <span>3</span>
+              <span>2</span>
               <span>1</span>
               <span>0</span>
               <span>1</span>
+              <span>2</span>
               <span>3</span>
+              <span>4</span>
               <span>5</span>
             </div>
           </div>
@@ -745,7 +674,7 @@ const ILSAssessment = ({ language = 'en' }) => {
       };
     
     return (
-      <div className="flex items-center justify-center min-h-screen pb-8 bg-gradient-to-r from-blue-100 to-blue-50 px-4 pt-15">
+      <div className="flex items-center justify-center min-h-screen pb-8 bg-gradient-to-r from-blue-100 to-blue-50 px-4 pt-30">
         <div className="w-full max-w-4xl p-4 sm:p-8 bg-white rounded-lg shadow-xl">
           <div className="text-center mb-6 sm:mb-8 relative pb-6 border-b border-gray-200">
             <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white w-20 h-20 rounded-full flex items-center justify-center shadow-lg">

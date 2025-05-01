@@ -1,4 +1,4 @@
-const ilsQuestions = [
+export default [
   {
     question: "मी एखादी गोष्ट अधिक चांगल्या प्रकारे समजून घेतो जेव्हा मी",
     options: [
